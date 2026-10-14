@@ -1,4 +1,16 @@
-import { Domain, ScoredTalent, AssessmentResult, DomainScore, TalentItem } from "./types";
+import { 
+  Domain, 
+  ScoredTalent, 
+  AssessmentResult, 
+  DomainScore, 
+  TalentItem,
+  MotivationScore,
+  MotivationProfile,
+  PsychotypeScore,
+  PsychotypeProfile,
+  SalesProfile
+} from "./types";
+import { MOTIVATION_TYPES, PSYCHOTYPES, CLIENT_COLORS } from "./data/sales-frameworks";
 
 export interface ResponseRecord {
   questionId: number;
@@ -48,7 +60,6 @@ export function calculateAssessment(
     if (stats[talentBId]) stats[talentBId].questionsCount++;
 
     if (choice === null) {
-      // Timeout: 0 points to both
       continue;
     }
 
@@ -59,25 +70,19 @@ export function calculateAssessment(
     let pointsB = 0;
 
     if (choice === -2) {
-      // Definitely A
       pointsA = 2.0;
       stats[talentAId].strongChoicesCount++;
       stats[talentAId].chosenTimesMs.push(responseTimeMs);
     } else if (choice === -1) {
-      // Likely A
       pointsA = 1.0;
       stats[talentAId].chosenTimesMs.push(responseTimeMs);
     } else if (choice === 0) {
-      // Neutral / Both
       pointsA = 0.3;
       pointsB = 0.3;
-      // Neutral choices don't count towards specific talent chosen times for tie-breaker
     } else if (choice === 1) {
-      // Likely B
       pointsB = 1.0;
       stats[talentBId].chosenTimesMs.push(responseTimeMs);
     } else if (choice === 2) {
-      // Definitely B
       pointsB = 2.0;
       stats[talentBId].strongChoicesCount++;
       stats[talentBId].chosenTimesMs.push(responseTimeMs);
@@ -119,34 +124,25 @@ export function calculateAssessment(
   });
 
   // Sort with Tie-Breaker
-  // 1) Score descending
-  // 2) Strong choices count descending
-  // 3) Avg response time ascending (faster wins)
-  // 4) Talent ID stable
   scoredList.sort((a, b) => {
-    // 1. Score
     if (Math.abs(b.score - a.score) > 0.001) {
       return b.score - a.score;
     }
-    // 2. Strong choices
     if (b.strongChoicesCount !== a.strongChoicesCount) {
       return b.strongChoicesCount - a.strongChoicesCount;
     }
-    // 3. Avg response time (faster = lower ms)
     if (a.avgResponseTimeMs !== b.avgResponseTimeMs) {
       return a.avgResponseTimeMs - b.avgResponseTimeMs;
     }
-    // 4. Stable ID
     return a.id - b.id;
   });
 
-  // Assign strict ranks 1..34
   scoredList.forEach((item, index) => {
     item.rank = index + 1;
   });
 
   const top5 = scoredList.slice(0, 5);
-  const blindSpots = scoredList.slice(29, 34); // ranks 30 to 34
+  const blindSpots = scoredList.slice(29, 34);
 
   // Domain aggregations
   const domainTotals: Record<Domain, number> = {
@@ -190,7 +186,6 @@ export function calculateAssessment(
     talentsInTop5: domainTop5Counts[dom],
   }));
 
-  // Determine dominant domain
   let dominantDomain: Domain = "executing";
   let maxDomainScore = -1;
   for (const d of domainList) {
@@ -199,6 +194,168 @@ export function calculateAssessment(
       dominantDomain = d.domain;
     }
   }
+
+  // Helper map by slug
+  const scoreMap: Record<string, number> = {};
+  for (const t of scoredList) {
+    scoreMap[t.slug] = t.score;
+  }
+  const getScore = (slug: string) => scoreMap[slug] || 0;
+
+  // --------------------------------------------------------------------------
+  // EXTENDED 2.0 ENGINE: 1. MOTIVATION TYPE (5 TYPES)
+  // --------------------------------------------------------------------------
+  const rawMotivationScores: Record<"money" | "status" | "result" | "budget" | "romantic", number> = {
+    money: getScore("competition") * 1.5 + getScore("achiever") * 1.3 + getScore("maximizer") * 1.2 + getScore("significance") * 0.8,
+    status: getScore("significance") * 1.6 + getScore("self_assurance") * 1.4 + getScore("command") * 1.2 + getScore("woo") * 0.8,
+    result: getScore("focus") * 1.5 + getScore("achiever") * 1.4 + getScore("activator") * 1.2 + getScore("strategic") * 1.1,
+    budget: getScore("discipline") * 1.6 + getScore("consistency") * 1.5 + getScore("deliberative") * 1.2 + getScore("responsibility") * 1.0,
+    romantic: getScore("ideation") * 1.6 + getScore("positivity") * 1.4 + getScore("futuristic") * 1.3 + getScore("adaptability") * 1.1,
+  };
+
+  const totalMotiv = Object.values(rawMotivationScores).reduce((a, b) => a + b, 0) || 1;
+
+  const motivationList: MotivationScore[] = (
+    ["money", "status", "result", "budget", "romantic"] as Array<"money" | "status" | "result" | "budget" | "romantic">
+  ).map((typeId) => ({
+    typeId,
+    nameRu: MOTIVATION_TYPES[typeId].nameRu,
+    badge: MOTIVATION_TYPES[typeId].badge,
+    score: Number(rawMotivationScores[typeId].toFixed(2)),
+    percentage: Math.round((rawMotivationScores[typeId] / totalMotiv) * 100),
+  })).sort((a, b) => b.score - a.score);
+
+  const dominantMotivation = motivationList[0];
+  const motivInfo = MOTIVATION_TYPES[dominantMotivation.typeId];
+
+  const motivationProfile: MotivationProfile = {
+    dominant: dominantMotivation,
+    all: motivationList,
+    kpiRecommendations: motivInfo.kpiRecommendations,
+    howToWork: motivInfo.howToWork,
+    whatNotToDo: motivInfo.whatNotToDo,
+  };
+
+  // --------------------------------------------------------------------------
+  // EXTENDED 2.0 ENGINE: 2. COMMUNICATION PSYCHOTYPE (DISC / 4 COLORS)
+  // --------------------------------------------------------------------------
+  const rawPsychoScores: Record<"directive" | "expressive" | "amiable" | "analytical", number> = {
+    directive: getScore("command") * 1.5 + getScore("competition") * 1.3 + getScore("self_assurance") * 1.2 + getScore("focus") * 1.1,
+    expressive: getScore("woo") * 1.5 + getScore("communication") * 1.4 + getScore("positivity") * 1.3 + getScore("significance") * 1.0,
+    amiable: getScore("harmony") * 1.5 + getScore("empathy") * 1.4 + getScore("includer") * 1.3 + getScore("developer") * 1.2 + getScore("relator") * 1.2,
+    analytical: getScore("analytical") * 1.6 + getScore("deliberative") * 1.4 + getScore("context") * 1.3 + getScore("intellection") * 1.2 + getScore("discipline") * 1.1,
+  };
+
+  const totalPsycho = Object.values(rawPsychoScores).reduce((a, b) => a + b, 0) || 1;
+
+  const psychotypeList: PsychotypeScore[] = (
+    ["directive", "expressive", "amiable", "analytical"] as Array<"directive" | "expressive" | "amiable" | "analytical">
+  ).map((id) => ({
+    id,
+    colorName: PSYCHOTYPES[id].colorName,
+    nameRu: PSYCHOTYPES[id].nameRu,
+    badge: PSYCHOTYPES[id].badge,
+    score: Number(rawPsychoScores[id].toFixed(2)),
+    percentage: Math.round((rawPsychoScores[id] / totalPsycho) * 100),
+  })).sort((a, b) => b.score - a.score);
+
+  const dominantPsycho = psychotypeList[0];
+  const psychoInfo = PSYCHOTYPES[dominantPsycho.id];
+
+  const psychotypeProfile: PsychotypeProfile = {
+    dominant: dominantPsycho,
+    all: psychotypeList,
+    mainValue: psychoInfo.mainValue,
+    keyQuestion: psychoInfo.keyQuestion,
+    speechStyle: psychoInfo.speechStyle,
+    howToCommunicate: psychoInfo.howToCommunicate,
+  };
+
+  // --------------------------------------------------------------------------
+  // EXTENDED 2.0 ENGINE: 3. SALES MATRIX & CLIENT COMPATIBILITY
+  // --------------------------------------------------------------------------
+  // Result vs Process Orientation
+  const executingAndInfluencing = domainTotals.executing + domainTotals.influencing;
+  const relationshipAndStrategic = domainTotals.relationship + domainTotals.strategic;
+  const grandTotal = executingAndInfluencing + relationshipAndStrategic || 1;
+  const resultOrientationPercent = Math.min(100, Math.max(0, Math.round((executingAndInfluencing / grandTotal) * 100)));
+
+  let orientationLabel: "Результатник" | "Процессник" | "Сбалансированный" = "Сбалансированный";
+  if (resultOrientationPercent >= 55) {
+    orientationLabel = "Результатник";
+  } else if (resultOrientationPercent <= 45) {
+    orientationLabel = "Процессник";
+  }
+
+  // Client Compatibility based on dominant psychotype & talents
+  let bestColor: "yellow" | "blue" | "green" | "red" = "yellow";
+  let challengeColor: "yellow" | "blue" | "green" | "red" = "blue";
+  let whyMatch = "";
+  let whyChallenge = "";
+
+  if (dominantPsycho.id === "directive") {
+    bestColor = "red";
+    whyMatch = "Вы общаетесь на равных, без 'воды' и лишних эмоций. Уверенно держите удар, говорите цифрами и закрываете максимальные чеки.";
+    challengeColor = "blue";
+    whyChallenge = "Болтливые клиенты могут вызывать у вас сильное раздражение нехваткой конкретики. Важно не обрывать их грубо, а мягко программировать тайминг диалога.";
+  } else if (dominantPsycho.id === "expressive") {
+    bestColor = "yellow";
+    whyMatch = "Вы мгновенно заражаете позитивом, делаете яркие эмоциональные презентации и легко закрываете сделку на подъеме энергии.";
+    challengeColor = "red";
+    whyChallenge = "Строгие доминантные клиенты могут воспринять вашу яркость как легкомыслие. С ними нужно отложить эмоции и говорить фактами.";
+  } else if (dominantPsycho.id === "amiable") {
+    bestColor = "green";
+    whyMatch = "Вы искренне слышите страхи сомневающегося клиента, окружаете заботой, формируете глубокое доверие и снимаете любые возражения без давления.";
+    challengeColor = "red";
+    whyChallenge = "Жесткое доминантное поведение может выбивать вас из колеи. Важно помнить, что резкость клиента — это не личное отношение, а способ проверки вашей экспертности.";
+  } else {
+    // analytical
+    bestColor = "green";
+    whyMatch = "Вы предоставляете идеальные логические доказательства, расчеты окупаемости и сравнительные таблицы, что полностью убеждает осторожного клиента.";
+    challengeColor = "yellow";
+    whyChallenge = "Эмоциональные клиенты не любят перегруза сухими цифрами. Вам стоит добавить больше живых историй, легкости и улыбки.";
+  }
+
+  // Neuro-sales & closing method
+  let crocBrainTactic = "С первых секунд давайте клиенту ощущение полной безопасности: спокойная уверенная речь, опрятный вид, отсутствие навязчивости.";
+  let aroSkillDescription = "В треугольнике АРО вы превосходно создаете контакт через Общение и Реальность — используете понятные клиенту жизненные факты.";
+  let closingMethod = "Метод гарантии и тест-драйва: 'Попробуйте наш продукт, оцените в деле — мы гарантируем результат'.";
+
+  if (dominantDomain === "influencing" || dominantPsycho.id === "directive") {
+    crocBrainTactic = "Подавайте информацию короткими контрастными блоками ('Было/Стало', 'С нашим решением / Без него'). Не заставляйте мозг клиента напрягаться.";
+    aroSkillDescription = "В треугольнике АРО вы лидируете через Общение: быстро захватываете инициативу и удерживаете фокус внимания клиента.";
+    closingMethod = "Метод дедлайна и ограниченной выгоды: 'Спецусловия фиксируются до конца дня, оформляем сейчас, чтобы сохранить за вами скидку'.";
+  } else if (dominantDomain === "relationship") {
+    crocBrainTactic = "Снятие настороженности через максимальную эмпатию и заботу. Клиент чувствует, что вы хотите решить его проблему, а не просто 'продать'.";
+    aroSkillDescription = "В треугольнике АРО вы сильны в Аффинити (симпатия и притяжение): клиент быстро чувствует к вам теплоту и доверие.";
+    closingMethod = "Метод выявления глубинной боли: связать решение проблемы с товаром так, чтобы клиент сам попросил оформить покупку.";
+  } else if (dominantDomain === "strategic") {
+    crocBrainTactic = "Подача выверенной, структурированной информации с визуальными схемами и понятными причинно-следственными связями.";
+    aroSkillDescription = "В треугольнике АРО вы опираетесь на Реальность: говорите фактами, с которыми собеседник объективно не может поспорить.";
+    closingMethod = "Метод дробления платежа / окупаемости: разложить общую сумму на ежедневную выгоду, показав финансовую логику решения.";
+  }
+
+  const salesProfile: SalesProfile = {
+    bestClientMatch: {
+      color: bestColor,
+      nameRu: CLIENT_COLORS[bestColor].nameRu,
+      badge: CLIENT_COLORS[bestColor].badge,
+      whyMatch,
+      howToSell: CLIENT_COLORS[bestColor].howToSell,
+    },
+    challengingClientMatch: {
+      color: challengeColor,
+      nameRu: CLIENT_COLORS[challengeColor].nameRu,
+      badge: CLIENT_COLORS[challengeColor].badge,
+      whyChallenge,
+      recommendedTactics: CLIENT_COLORS[challengeColor].howToSell,
+    },
+    resultOrientationPercent,
+    orientationLabel,
+    crocBrainTactic,
+    aroSkillDescription,
+    closingMethod,
+  };
 
   return {
     top5,
@@ -209,5 +366,8 @@ export function calculateAssessment(
     completedAt: new Date().toISOString(),
     totalTimeMs,
     speedBonusHits,
+    motivation: motivationProfile,
+    psychotype: psychotypeProfile,
+    salesProfile,
   };
 }

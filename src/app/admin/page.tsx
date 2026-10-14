@@ -19,7 +19,13 @@ import {
   Award,
   AlertTriangle,
   ArrowUpDown,
-  Home
+  Home,
+  Coins,
+  MessageSquare,
+  Crosshair,
+  Palette,
+  ShieldAlert,
+  Lightbulb
 } from "lucide-react";
 import { AssessmentResult, Domain, ScoredTalent } from "@/lib/types";
 
@@ -41,6 +47,8 @@ export default function AdminDashboardPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [domainFilter, setDomainFilter] = useState("all");
+  const [motivationFilter, setMotivationFilter] = useState("all");
+  const [psychotypeFilter, setPsychotypeFilter] = useState("all");
   const [availableRoles, setAvailableRoles] = useState<string[]>([]);
   const [teamMatrix, setTeamMatrix] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<"employees" | "matrix">("employees");
@@ -50,7 +58,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchData();
-  }, [roleFilter, domainFilter]);
+  }, [roleFilter, domainFilter, motivationFilter, psychotypeFilter]);
 
   const fetchData = async () => {
     try {
@@ -58,6 +66,8 @@ export default function AdminDashboardPage() {
       const params = new URLSearchParams();
       if (roleFilter !== "all") params.append("role", roleFilter);
       if (domainFilter !== "all") params.append("domain", domainFilter);
+      if (motivationFilter !== "all") params.append("motivation", motivationFilter);
+      if (psychotypeFilter !== "all") params.append("psychotype", psychotypeFilter);
 
       const res = await fetch(`/api/admin/sessions?${params.toString()}`);
       const data = await res.json();
@@ -72,8 +82,7 @@ export default function AdminDashboardPage() {
   };
 
   const filteredSessions = sessions.filter((s) => {
-    const matchName = s.employeeName.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchName;
+    return s.employeeName.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   const getDomainBadge = (domain?: Domain) => {
@@ -92,7 +101,7 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-4xl mx-auto pb-16">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-5xl mx-auto pb-16">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
         <div>
@@ -101,11 +110,11 @@ export default function AdminDashboardPage() {
               Дашборд Руководителя
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-600 text-white">
-              HR & Management
+              HR & Commercial Audit 2.0
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Аналитика сильных сторон команды, матрицы покрытия талантов и персональные инструкции по управлению
+            Комплексный коммерческий аудит сотрудников: Gallup 34, Мотивационная типология, Психотипы DISC и Матрица продаж
           </p>
         </div>
 
@@ -143,60 +152,87 @@ export default function AdminDashboardPage() {
           }`}
         >
           <Grid className="w-4 h-4" />
-          Командная Матрица (Team Grid)
+          Командная Матрица (Team Grid 2.0)
         </button>
       </div>
 
-      {/* TAB 1: EMPLOYEES LIST & DOSSIER */}
+      {/* TAB 1: EMPLOYEES LIST */}
       {activeTab === "employees" && (
         <div className="space-y-4">
           {/* Search and Filters */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <div className="relative">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2">
+            <div className="relative md:col-span-1">
+              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-3" />
               <input
                 type="text"
                 placeholder="Поиск по имени..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full pl-8 pr-2.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
 
-            <div className="relative">
+            <div>
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-2.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none"
               >
                 <option value="all">Все должности</option>
                 {availableRoles.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
+                  <option key={r} value={r}>{r}</option>
                 ))}
               </select>
             </div>
 
-            <div className="relative">
+            <div>
               <select
                 value={domainFilter}
                 onChange={(e) => setDomainFilter(e.target.value)}
-                className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-2.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none"
               >
-                <option value="all">Все домены</option>
+                <option value="all">Все домены Gallup</option>
                 <option value="executing">Исполнение</option>
                 <option value="influencing">Влияние</option>
                 <option value="relationship">Отношения</option>
                 <option value="strategic">Мышление</option>
               </select>
             </div>
+
+            <div>
+              <select
+                value={motivationFilter}
+                onChange={(e) => setMotivationFilter(e.target.value)}
+                className="w-full px-2.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none"
+              >
+                <option value="all">Вся мотивация (5)</option>
+                <option value="money">Денежник 💰</option>
+                <option value="status">Статусник 👑</option>
+                <option value="result">Результатник 🏆</option>
+                <option value="budget">Бюджетник 📑</option>
+                <option value="romantic">Романтик 🎨</option>
+              </select>
+            </div>
+
+            <div>
+              <select
+                value={psychotypeFilter}
+                onChange={(e) => setPsychotypeFilter(e.target.value)}
+                className="w-full px-2.5 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none"
+              >
+                <option value="all">Все психотипы (4)</option>
+                <option value="directive">Директив 🔴</option>
+                <option value="expressive">Экспрессив 🟡</option>
+                <option value="amiable">Дружелюбный 🟢</option>
+                <option value="analytical">Аналитик 🔵</option>
+              </select>
+            </div>
           </div>
 
-          {/* Table / Cards */}
+          {/* List of Employees */}
           {loading ? (
             <div className="text-center py-12 text-slate-400 text-xs animate-pulse">
-              Загрузка списка сотрудников...
+              Загрузка досье сотрудников...
             </div>
           ) : filteredSessions.length === 0 ? (
             <div className="text-center py-12 bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-xs">
@@ -212,7 +248,7 @@ export default function AdminDashboardPage() {
                     selectedSession?.id === s.id ? "border-purple-500 ring-2 ring-purple-100" : "border-slate-200"
                   }`}
                 >
-                  <div className="space-y-1">
+                  <div className="space-y-1.5">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-extrabold text-sm text-slate-900">
                         {s.employeeName}
@@ -221,10 +257,22 @@ export default function AdminDashboardPage() {
                         {s.employeeRole}
                       </span>
                       {getDomainBadge(s.results?.dominantDomain)}
+
+                      {s.results?.motivation && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                          {s.results.motivation.dominant.badge}
+                        </span>
+                      )}
+
+                      {s.results?.psychotype && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                          {s.results.psychotype.dominant.badge}
+                        </span>
+                      )}
                     </div>
 
                     {s.results ? (
-                      <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-600 pt-1">
+                      <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-600">
                         <span className="font-semibold text-slate-500 text-[11px]">Топ-5:</span>
                         {s.results.top5.map((t) => (
                           <span
@@ -245,7 +293,7 @@ export default function AdminDashboardPage() {
                   <div className="flex items-center gap-2 self-end sm:self-center">
                     {s.results && (
                       <span className="text-xs font-bold text-purple-600 flex items-center gap-1">
-                        Открыть досье <ChevronRight className="w-4 h-4" />
+                        Открыть паспорт <ChevronRight className="w-4 h-4" />
                       </span>
                     )}
                   </div>
@@ -259,35 +307,83 @@ export default function AdminDashboardPage() {
       {/* TAB 2: TEAM MATRIX */}
       {activeTab === "matrix" && teamMatrix && (
         <div className="space-y-5">
-          {/* Domain Distribution Summary */}
+          {/* Motivation Distribution */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <Coins className="w-4 h-4 text-amber-500" />
+              Распределение Мотивационных Типов в Команде (5 типов)
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+              <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200">
+                <div className="font-extrabold text-amber-900 text-lg">{teamMatrix.motivationDistribution?.money || 0}</div>
+                <div className="text-[10px] font-bold text-amber-700">Денежники 💰</div>
+              </div>
+              <div className="p-2.5 rounded-xl bg-purple-50 border border-purple-200">
+                <div className="font-extrabold text-purple-900 text-lg">{teamMatrix.motivationDistribution?.status || 0}</div>
+                <div className="text-[10px] font-bold text-purple-700">Статусники 👑</div>
+              </div>
+              <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200">
+                <div className="font-extrabold text-rose-900 text-lg">{teamMatrix.motivationDistribution?.result || 0}</div>
+                <div className="text-[10px] font-bold text-rose-700">Результатники 🏆</div>
+              </div>
+              <div className="p-2.5 rounded-xl bg-slate-100 border border-slate-200">
+                <div className="font-extrabold text-slate-900 text-lg">{teamMatrix.motivationDistribution?.budget || 0}</div>
+                <div className="text-[10px] font-bold text-slate-700">Бюджетники 📑</div>
+              </div>
+              <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                <div className="font-extrabold text-emerald-900 text-lg">{teamMatrix.motivationDistribution?.romantic || 0}</div>
+                <div className="text-[10px] font-bold text-emerald-700">Романтики 🎨</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Psychotype Distribution */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <MessageSquare className="w-4 h-4 text-blue-600" />
+              Коммуникативный Баланс Команды (4 Психотипа DISC)
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+              <div className="p-3 rounded-xl bg-red-50 border border-red-200">
+                <div className="font-extrabold text-red-900 text-lg">{teamMatrix.psychotypeDistribution?.directive || 0}</div>
+                <div className="text-[11px] font-bold text-red-700">Директивы 🔴</div>
+              </div>
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200">
+                <div className="font-extrabold text-amber-900 text-lg">{teamMatrix.psychotypeDistribution?.expressive || 0}</div>
+                <div className="text-[11px] font-bold text-amber-700">Экспрессивы 🟡</div>
+              </div>
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                <div className="font-extrabold text-emerald-900 text-lg">{teamMatrix.psychotypeDistribution?.amiable || 0}</div>
+                <div className="text-[11px] font-bold text-emerald-700">Дружелюбные 🟢</div>
+              </div>
+              <div className="p-3 rounded-xl bg-blue-50 border border-blue-200">
+                <div className="font-extrabold text-blue-900 text-lg">{teamMatrix.psychotypeDistribution?.analytical || 0}</div>
+                <div className="text-[11px] font-bold text-blue-700">Аналитики 🔵</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Gallup Domains Summary */}
           <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <Award className="w-4 h-4 text-purple-600" />
-              Баланс 4 Доменов в Команде
+              Баланс 4 Доменов Gallup в Отделе
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
               <div className="p-3 rounded-xl bg-purple-50 border border-purple-200">
-                <div className="font-extrabold text-purple-800 text-lg">
-                  {teamMatrix.domainDistribution.executing || 0}
-                </div>
+                <div className="font-extrabold text-purple-800 text-lg">{teamMatrix.domainDistribution?.executing || 0}</div>
                 <div className="text-[11px] font-bold text-purple-600">Исполнители</div>
               </div>
               <div className="p-3 rounded-xl bg-orange-50 border border-orange-200">
-                <div className="font-extrabold text-orange-800 text-lg">
-                  {teamMatrix.domainDistribution.influencing || 0}
-                </div>
+                <div className="font-extrabold text-orange-800 text-lg">{teamMatrix.domainDistribution?.influencing || 0}</div>
                 <div className="text-[11px] font-bold text-orange-600">Лидеры Влияния</div>
               </div>
               <div className="p-3 rounded-xl bg-blue-50 border border-blue-200">
-                <div className="font-extrabold text-blue-800 text-lg">
-                  {teamMatrix.domainDistribution.relationship || 0}
-                </div>
+                <div className="font-extrabold text-blue-800 text-lg">{teamMatrix.domainDistribution?.relationship || 0}</div>
                 <div className="text-[11px] font-bold text-blue-600">Мастера Отношений</div>
               </div>
               <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                <div className="font-extrabold text-emerald-800 text-lg">
-                  {teamMatrix.domainDistribution.strategic || 0}
-                </div>
+                <div className="font-extrabold text-emerald-800 text-lg">{teamMatrix.domainDistribution?.strategic || 0}</div>
                 <div className="text-[11px] font-bold text-emerald-600">Стратеги / Мыслители</div>
               </div>
             </div>
@@ -299,11 +395,7 @@ export default function AdminDashboardPage() {
               <Grid className="w-4 h-4 text-indigo-600" />
               Частота талантов в Топ-5 команды (Покрытие матрицы)
             </h3>
-            <p className="text-xs text-slate-500">
-              Показывает, сколько раз каждый талант вошел в Top-5 у ваших сотрудников:
-            </p>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 pt-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 pt-1">
               {Object.entries(teamMatrix.talentFrequency || {})
                 .sort((a: any, b: any) => b[1].count - a[1].count)
                 .map(([slug, item]: any) => (
@@ -325,7 +417,7 @@ export default function AdminDashboardPage() {
         </div>
       )}
 
-      {/* EMPLOYEE DOSSIER MODAL */}
+      {/* DETAILED EMPLOYEE DOSSIER MODAL */}
       {selectedSession && selectedSession.results && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in">
           <div className="w-full max-w-2xl bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-5">
@@ -333,14 +425,25 @@ export default function AdminDashboardPage() {
             <div className="flex items-start justify-between border-b border-slate-150 pb-3">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2.5 py-0.5 rounded-full">
-                  Карточка сотрудника для руководителя
+                  Паспорт сотрудника 2.0 (Коммерческий профайлинг)
                 </span>
                 <h2 className="text-xl font-black text-slate-900 mt-1">
                   {selectedSession.employeeName}
                 </h2>
-                <p className="text-xs text-slate-500">
-                  {selectedSession.employeeRole} • Доминирующий домен: {getDomainBadge(selectedSession.results.dominantDomain)}
-                </p>
+                <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-500 mt-1">
+                  <span>{selectedSession.employeeRole}</span> • 
+                  {getDomainBadge(selectedSession.results.dominantDomain)}
+                  {selectedSession.results.motivation && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                      {selectedSession.results.motivation.dominant.badge}
+                    </span>
+                  )}
+                  {selectedSession.results.psychotype && (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                      {selectedSession.results.psychotype.dominant.badge}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <button
@@ -351,7 +454,60 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            {/* TOP-5 & BLIND SPOTS OVERVIEW */}
+            {/* MOTIVATION & KPI DIRECTIVE */}
+            {selectedSession.results.motivation && (
+              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-300 space-y-2 text-xs">
+                <span className="font-bold text-amber-900 flex items-center gap-1.5 text-xs">
+                  <Coins className="w-4 h-4 text-amber-600" />
+                  Мотивация и Регламент Оплаты: {selectedSession.results.motivation.dominant.badge}
+                </span>
+                <p className="text-amber-900 text-[11px] leading-relaxed">
+                  <span className="font-bold">🎯 Рекомендованный KPI:</span> {selectedSession.results.motivation.kpiRecommendations}
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  <div className="p-2 rounded-xl bg-white/80 border border-amber-200">
+                    <span className="font-bold text-emerald-800 block text-[10px] mb-0.5">Как работать:</span>
+                    <ul className="list-disc list-inside text-slate-700 text-[10px] space-y-0.5">
+                      {selectedSession.results.motivation.howToWork.map((tip, idx) => (
+                        <li key={idx}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="p-2 rounded-xl bg-white/80 border border-amber-200">
+                    <span className="font-bold text-rose-800 block text-[10px] mb-0.5">Что нельзя делать:</span>
+                    <ul className="list-disc list-inside text-slate-700 text-[10px] space-y-0.5">
+                      {selectedSession.results.motivation.whatNotToDo.map((tip, idx) => (
+                        <li key={idx}>{tip}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* SALES & CLIENT PROFILE */}
+            {selectedSession.results.salesProfile && (
+              <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-300 space-y-2 text-xs">
+                <span className="font-bold text-emerald-900 flex items-center gap-1.5 text-xs">
+                  <Palette className="w-4 h-4 text-emerald-600" />
+                  Расстановка в смене: Клиентская совместимость
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
+                  <div className="p-2.5 rounded-xl bg-white/90 border border-emerald-200">
+                    <span className="font-bold text-emerald-950 block">Идеальный клиент:</span>
+                    <span className="font-semibold text-emerald-700">{selectedSession.results.salesProfile.bestClientMatch.nameRu}</span>
+                    <p className="text-slate-600 text-[10px] mt-1">{selectedSession.results.salesProfile.bestClientMatch.whyMatch}</p>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white/90 border border-amber-200">
+                    <span className="font-bold text-amber-950 block">Сложный клиент:</span>
+                    <span className="font-semibold text-amber-700">{selectedSession.results.salesProfile.challengingClientMatch.nameRu}</span>
+                    <p className="text-slate-600 text-[10px] mt-1">{selectedSession.results.salesProfile.challengingClientMatch.whyChallenge}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TOP-5 & BLIND SPOTS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div className="p-3.5 rounded-2xl bg-purple-50/70 border border-purple-200 space-y-2">
                 <span className="font-bold text-purple-900 flex items-center gap-1.5">
@@ -368,8 +524,8 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-2">
-                <span className="font-bold text-amber-900 flex items-center gap-1.5">
+              <div className="p-3.5 rounded-2xl bg-slate-100 border border-slate-200 space-y-2">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
                   <AlertTriangle className="w-4 h-4 text-amber-600" />
                   Слепая зона (30–34 место):
                 </span>
@@ -377,58 +533,40 @@ export default function AdminDashboardPage() {
                   {selectedSession.results.blindSpots.map((b) => (
                     <div key={b.id} className="flex justify-between items-center text-slate-700">
                       <span>#{b.rank} {b.nameRu}</span>
-                      <span className="text-[10px] text-slate-400">Нужна опора/чек-лист</span>
+                      <span className="text-[10px] text-slate-400">Нужен чек-лист/напарник</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* MANAGER ACTION INSTRUCTION (Собранная выжимка) */}
-            <div className="space-y-3 pt-1">
-              <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+            {/* MANAGER ACTION INSTRUCTIONS */}
+            <div className="space-y-2.5 pt-1 text-xs">
+              <h3 className="font-extrabold text-slate-900 flex items-center gap-2 text-sm">
                 <Shield className="w-4 h-4 text-purple-600" />
-                Инструкция для Руководителя: Как ставить задачи и мотивировать
+                Инструкция по задачам и контролю (Top-5 талантов):
               </h3>
-
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {selectedSession.results.top5.map((t) => (
-                  <div key={t.id} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
-                    <div className="font-bold text-slate-900 flex items-center justify-between border-b border-slate-200 pb-1.5">
-                      <span>Талант #{t.rank}: {t.nameRu} ({t.nameEn})</span>
-                      <span className="text-[10px] uppercase font-bold text-purple-600">{t.domain}</span>
+                  <div key={t.id} className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1 text-[11px]">
+                    <div className="font-bold text-slate-900 flex justify-between">
+                      <span>#{t.rank} {t.nameRu} ({t.nameEn})</span>
+                      <span className="uppercase text-[9px] text-purple-600 font-extrabold">{t.domain}</span>
                     </div>
-
-                    <div className="grid grid-cols-1 gap-1.5 text-slate-700">
-                      <div>
-                        <span className="font-bold text-slate-900">📌 Куда ставить в смене:</span>{" "}
-                        {t.managerGuide.tasks}
-                      </div>
-                      <div>
-                        <span className="font-bold text-emerald-800">🎯 Как мотивировать:</span>{" "}
-                        {t.managerGuide.motivation}
-                      </div>
-                      <div>
-                        <span className="font-bold text-indigo-800">🔍 Как контролировать:</span>{" "}
-                        {t.managerGuide.control}
-                      </div>
-                      <div>
-                        <span className="font-bold text-rose-800">⚠️ Триггеры демотивации:</span>{" "}
-                        {t.managerGuide.demotivationTriggers}
-                      </div>
-                    </div>
+                    <div><span className="font-semibold text-slate-700">📌 Задачи в смене:</span> {t.managerGuide.tasks}</div>
+                    <div><span className="font-semibold text-emerald-700">🎯 Мотивация:</span> {t.managerGuide.motivation}</div>
+                    <div><span className="font-semibold text-rose-700">⚠️ Демотивация:</span> {t.managerGuide.demotivationTriggers}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Close Button */}
             <div className="pt-2 flex justify-end">
               <button
                 onClick={() => setSelectedSession(null)}
                 className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition"
               >
-                Закрыть карточку
+                Закрыть паспорт
               </button>
             </div>
           </div>
