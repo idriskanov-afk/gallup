@@ -9,10 +9,28 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        executing: "#8B5CF6", // Purple
-        influencing: "#F97316", // Orange
-        relationship: "#3B82F6", // Blue
-        strategic: "#10B981", // Emerald/Green
+        club: {
+          50: "#F0FDFA",
+          100: "#CCFBF1",
+          200: "#99F6E4",
+          300: "#5EEAD4",
+          400: "#2DD4BF",
+          500: "#14B8A6", // 35 Health Club Teal
+          600: "#0D9488",
+          700: "#0F766E",
+          800: "#115E59",
+          900: "#134E4A",
+        },
+        charcoal: {
+          700: "#3F3F46",
+          800: "#27272A",
+          900: "#18181B",
+          950: "#09090B",
+        },
+        executing: "#7C3AED", // Royal Purple
+        influencing: "#EA580C", // Amber/Orange
+        relationship: "#2563EB", // Blue
+        strategic: "#0D9488", // Teal/Emerald
       },
     },
   },

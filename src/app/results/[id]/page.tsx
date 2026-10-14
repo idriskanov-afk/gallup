@@ -32,7 +32,10 @@ import {
   Crosshair,
   Compass,
   MessageSquare,
-  ShieldAlert
+  ShieldAlert,
+  Copy,
+  Check,
+  ExternalLink
 } from "lucide-react";
 import { AssessmentResult, Domain, ScoredTalent } from "@/lib/types";
 import { TALENT_INSIGHTS } from "@/lib/data/talent-insights";
@@ -104,25 +107,43 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
     loadResults();
   }, [sessionId, router]);
 
+  const copyToClipboard = async () => {
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = url;
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch (e) {
+      console.warn("Failed to copy URL:", e);
+    }
+  };
+
   const handleShare = async () => {
-    const url = window.location.href;
+    const url = typeof window !== "undefined" ? window.location.href : "";
     if (navigator.share) {
       try {
         await navigator.share({
-          title: `Профиль талантов CliftonStrengths: ${session?.employeeName}`,
-          text: `Мои топ-5 талантов: ${results?.top5.map((t) => t.nameRu).join(", ")} | Мотивация: ${results?.motivation?.dominant.nameRu}`,
+          title: `35 Health Clubs | Профиль CliftonStrengths: ${session?.employeeName}`,
+          text: `Топ-5 талантов: ${results?.top5.map((t) => t.nameRu).join(", ")} | Мотивация: ${results?.motivation?.dominant.nameRu}`,
           url,
         });
+        return;
       } catch {
-        navigator.clipboard.writeText(url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        // Fallback to copy
       }
-    } else {
-      navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     }
+    await copyToClipboard();
   };
 
   const getDomainStyle = (domain: Domain) => {
@@ -173,8 +194,8 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 space-y-4">
-        <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm font-medium text-slate-600">Формирование вашего комплексного бизнес-профайла...</p>
+        <div className="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin" />
+        <p className="text-sm font-medium text-slate-600">Формирование комплексного бизнес-профайла 35 Health Clubs...</p>
       </div>
     );
   }
@@ -187,7 +208,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         </div>
         <button
           onClick={() => router.push("/")}
-          className="px-4 py-2 bg-purple-600 text-white rounded-xl text-xs font-semibold"
+          className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-semibold shadow transition"
         >
           На главную
         </button>
@@ -209,16 +230,19 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
       {/* ============================================================== */}
       <div className="hidden print:block border-b-2 border-slate-900 pb-4 mb-6">
         <div className="flex items-center justify-between">
-          <div>
-            <div className="text-xs font-black uppercase tracking-widest text-purple-700">
-              CliftonStrengths® Extended 2.0 • Комплексный Бизнес-Профайлинг
+          <div className="flex items-center gap-4">
+            <img src="/logo.png" alt="35 Health Clubs" className="h-12 object-contain" />
+            <div>
+              <div className="text-xs font-black uppercase tracking-widest text-teal-700">
+                35 HEALTH CLUBS • CliftonStrengths® 2.0 • Комплексный Бизнес-Профайлинг
+              </div>
+              <h1 className="text-2xl font-black text-slate-900 mt-0.5">
+                Персональное Досье Линейного Сотрудника
+              </h1>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Оценка 34 талантов Gallup + Мотивационная типология + Коммуникативный психотип DISC + Матрица продаж
+              </p>
             </div>
-            <h1 className="text-2xl font-black text-slate-900 mt-0.5">
-              Персональное Досье Линейного Сотрудника
-            </h1>
-            <p className="text-xs text-slate-600 mt-1">
-              Оценка 34 талантов Gallup + Мотивационная типология + Коммуникативный психотип + Матрица продаж
-            </p>
           </div>
           <div className="text-right text-xs text-slate-700 space-y-0.5 font-mono">
             <div><span className="font-bold">Сотрудник:</span> {session?.employeeName}</div>
@@ -234,9 +258,12 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
       {/* WEB HEADER BANNER */}
       {/* ============================================================== */}
       <div className="text-center space-y-2 pt-2 print:hidden">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          Комплексный профиль успешно сформирован
+        <div className="flex justify-center mb-2">
+          <img src="/logo.png" alt="35 Health Clubs" className="h-12 sm:h-14 object-contain" />
+        </div>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold uppercase tracking-wider">
+          <CheckCircle2 className="w-4 h-4 text-teal-600" />
+          Комплексный профиль сотрудника 35 Health Clubs
         </div>
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
           {session?.employeeName || "Сотрудник"}
@@ -258,11 +285,68 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </span>
           )}
           {sales && (
-            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-purple-50 text-purple-800 border border-purple-300 shadow-sm flex items-center gap-1">
-              <Crosshair className="w-3.5 h-3.5 text-purple-600" />
+            <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-teal-50 text-teal-800 border border-teal-300 shadow-sm flex items-center gap-1">
+              <Crosshair className="w-3.5 h-3.5 text-teal-600" />
               Ориентация: {sales.orientationLabel} ({sales.resultOrientationPercent}%)
             </span>
           )}
+        </div>
+      </div>
+
+      {/* ============================================================== */}
+      {/* DIRECT SHARE / COPY RESULT LINK CARD */}
+      {/* ============================================================== */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-white border-2 border-teal-500/30 shadow-sm space-y-3 print:hidden">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
+              <Share2 className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="font-extrabold text-sm text-slate-900">
+                Прямая ссылка на результат сотрудника
+              </h3>
+              <p className="text-[11px] text-slate-500">
+                Скопируйте ссылку для руководителя, HR или личного архива
+              </p>
+            </div>
+          </div>
+          {copied && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold animate-in fade-in">
+              <Check className="w-3.5 h-3.5 text-emerald-600" />
+              Скопировано!
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            readOnly
+            value={typeof window !== "undefined" ? window.location.href : ""}
+            onClick={(e) => (e.target as HTMLInputElement).select()}
+            className="flex-1 px-3 py-2.5 text-xs font-mono bg-slate-50 border border-slate-200 rounded-xl text-slate-700 select-all focus:outline-none focus:ring-2 focus:ring-teal-500"
+          />
+          <button
+            onClick={copyToClipboard}
+            className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm active:scale-95 whitespace-nowrap ${
+              copied
+                ? "bg-emerald-600 text-white hover:bg-emerald-700"
+                : "bg-teal-600 hover:bg-teal-700 text-white"
+            }`}
+          >
+            {copied ? (
+              <>
+                <Check className="w-4 h-4" />
+                Скопировано
+              </>
+            ) : (
+              <>
+                <Copy className="w-4 h-4" />
+                Скопировать ссылку
+              </>
+            )}
+          </button>
         </div>
       </div>
 
@@ -274,7 +358,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           onClick={() => setActiveTab("talents")}
           className={`py-2 px-3.5 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap ${
             activeTab === "talents"
-              ? "bg-purple-600 text-white shadow-sm"
+              ? "bg-teal-600 text-white shadow-sm"
               : "bg-slate-100 text-slate-600 hover:bg-slate-200"
           }`}
         >
@@ -815,14 +899,14 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2.5 text-xs">
             <div className="flex justify-between items-center font-bold text-slate-800">
               <span className="flex items-center gap-1.5">
-                <Crosshair className="w-4 h-4 text-purple-600" />
-                Ориентация: <span className="text-purple-700 font-black">{sales.orientationLabel}</span>
+                <Crosshair className="w-4 h-4 text-teal-600" />
+                Ориентация: <span className="text-teal-700 font-black">{sales.orientationLabel}</span>
               </span>
-              <span className="font-mono text-purple-600 font-extrabold">{sales.resultOrientationPercent}% фокус на результат</span>
+              <span className="font-mono text-teal-600 font-extrabold">{sales.resultOrientationPercent}% фокус на результат</span>
             </div>
 
             <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden flex">
-              <div className="bg-purple-600 h-full" style={{ width: `${sales.resultOrientationPercent}%` }} />
+              <div className="bg-teal-600 h-full" style={{ width: `${sales.resultOrientationPercent}%` }} />
               <div className="bg-emerald-500 h-full" style={{ width: `${100 - sales.resultOrientationPercent}%` }} />
             </div>
 
@@ -921,19 +1005,27 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
       {/* ============================================================== */}
       <div className="flex flex-col sm:flex-row gap-2.5 pt-4 print:hidden">
         <button
-          onClick={handleShare}
-          className="flex-1 py-3.5 px-4 bg-purple-600 text-white font-bold rounded-xl text-xs shadow hover:bg-purple-700 active:scale-95 transition flex items-center justify-center gap-2"
+          onClick={copyToClipboard}
+          className="flex-1 py-3.5 px-4 bg-teal-600 text-white font-bold rounded-xl text-xs shadow-md hover:bg-teal-700 active:scale-95 transition flex items-center justify-center gap-2"
         >
-          <Share2 className="w-4 h-4" />
-          {copied ? "Ссылка скопирована!" : "Поделиться результатами"}
+          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+          {copied ? "Ссылка скопирована в буфер!" : "Скопировать ссылку на результат"}
+        </button>
+
+        <button
+          onClick={handleShare}
+          className="py-3.5 px-4 bg-slate-800 text-white font-bold rounded-xl text-xs shadow hover:bg-slate-700 active:scale-95 transition flex items-center justify-center gap-2"
+        >
+          <Share2 className="w-4 h-4 text-teal-400" />
+          Поделиться
         </button>
 
         <button
           onClick={() => window.print()}
           className="py-3.5 px-5 bg-slate-900 text-white font-bold rounded-xl text-xs shadow hover:bg-slate-800 active:scale-95 transition flex items-center justify-center gap-2"
         >
-          <Printer className="w-4 h-4 text-purple-300" />
-          Распечатать полный отчет (PDF)
+          <Printer className="w-4 h-4 text-teal-300" />
+          Распечатать отчет (PDF)
         </button>
 
         <button
@@ -947,7 +1039,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
 
       {/* Print Footer Watermark */}
       <div className="hidden print:block text-center text-[10px] text-slate-400 pt-6 border-t border-slate-200">
-        CliftonStrengths® Extended 2.0 • Персональный коммерческий профиль сформирован системой автоматизированного тестирования
+        35 Health Clubs • CliftonStrengths® Extended 2.0 • Персональный коммерческий профиль сформирован системой автоматизированного тестирования
       </div>
     </div>
   );

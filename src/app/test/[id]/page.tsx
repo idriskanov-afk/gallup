@@ -196,15 +196,24 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
 
   return (
     <div className="flex flex-col min-h-screen justify-between p-3.5 sm:p-5 md:p-6 space-y-3 sm:space-y-4 max-w-xl mx-auto">
-      {/* Top Header: Progress & Timer */}
+      {/* Top Header: Brand, Progress & Timer */}
       <div className="space-y-2 pt-1">
+        <div className="flex items-center justify-between pb-1">
+          <div className="flex items-center gap-2">
+            <img src="/logo.png" alt="35 Health Clubs" className="h-7 object-contain" />
+            <span className="text-[11px] font-black tracking-wider uppercase text-slate-800">
+              35 Health Clubs
+            </span>
+          </div>
+          <span className="text-slate-400 font-semibold text-xs">
+            {employeeName}
+          </span>
+        </div>
+
         <div className="flex items-center justify-between text-xs font-bold text-slate-600">
           <div className="flex items-center gap-1.5">
-            <span className="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-700 font-extrabold">
+            <span className="px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 font-extrabold">
               Вопрос {questionNum} / {TOTAL_QUESTIONS}
-            </span>
-            <span className="text-slate-400 font-normal hidden sm:inline">
-              ({employeeName})
             </span>
           </div>
 
@@ -218,7 +227,7 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
         {/* Global Progress Bar */}
         <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
           <div
-            className="bg-purple-600 h-full transition-all duration-300 ease-out"
+            className="bg-teal-600 h-full transition-all duration-300 ease-out"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -248,9 +257,9 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
       {/* Main Question Cards (Statements A & B) */}
       <div className="space-y-3 sm:space-y-4 my-auto">
         {/* Card A */}
-        <div className="relative p-4 sm:p-5 rounded-2xl bg-white border-2 border-purple-200/80 shadow-sm hover:border-purple-400 transition">
+        <div className="relative p-4 sm:p-5 rounded-2xl bg-white border-2 border-teal-200/80 shadow-sm hover:border-teal-400 transition">
           <div className="flex items-center justify-between mb-2">
-            <span className="px-2.5 py-0.5 rounded-md bg-purple-600 text-white text-xs font-bold tracking-wide uppercase">
+            <span className="px-2.5 py-0.5 rounded-md bg-teal-600 text-white text-xs font-bold tracking-wide uppercase">
               Утверждение А
             </span>
           </div>
@@ -268,9 +277,9 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
         </div>
 
         {/* Card B */}
-        <div className="relative p-4 sm:p-5 rounded-2xl bg-white border-2 border-indigo-200/80 shadow-sm hover:border-indigo-400 transition">
+        <div className="relative p-4 sm:p-5 rounded-2xl bg-white border-2 border-slate-300/80 shadow-sm hover:border-slate-500 transition">
           <div className="flex items-center justify-between mb-2">
-            <span className="px-2.5 py-0.5 rounded-md bg-indigo-600 text-white text-xs font-bold tracking-wide uppercase">
+            <span className="px-2.5 py-0.5 rounded-md bg-slate-800 text-white text-xs font-bold tracking-wide uppercase">
               Утверждение Б
             </span>
           </div>
@@ -292,7 +301,7 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
             type="button"
             disabled={submitting}
             onClick={() => handleChoice(-2)}
-            className="flex flex-col items-center justify-center py-3.5 px-1 rounded-xl bg-purple-600 text-white font-bold text-xs shadow hover:bg-purple-700 active:scale-95 transition disabled:opacity-50"
+            className="flex flex-col items-center justify-center py-3.5 px-1 rounded-xl bg-teal-600 text-white font-bold text-xs shadow hover:bg-teal-700 active:scale-95 transition disabled:opacity-50"
           >
             <span className="text-sm font-black mb-0.5">Точно А</span>
             <span className="text-[10px] opacity-80">+2.0 б</span>
@@ -303,7 +312,7 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
             type="button"
             disabled={submitting}
             onClick={() => handleChoice(-1)}
-            className="flex flex-col items-center justify-center py-3.5 px-1 rounded-xl bg-purple-100 text-purple-800 font-semibold text-xs border border-purple-200 hover:bg-purple-200 active:scale-95 transition disabled:opacity-50"
+            className="flex flex-col items-center justify-center py-3.5 px-1 rounded-xl bg-teal-50 text-teal-800 font-semibold text-xs border border-teal-200 hover:bg-teal-100 active:scale-95 transition disabled:opacity-50"
           >
             <span className="text-xs font-bold mb-0.5">Скорее А</span>
             <span className="text-[10px] opacity-70">+1.0 б</span>
@@ -325,7 +334,7 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
             type="button"
             disabled={submitting}
             onClick={() => handleChoice(1)}
-            className="flex flex-col items-center justify-center py-3.5 px-1 rounded-xl bg-indigo-100 text-indigo-800 font-semibold text-xs border border-indigo-200 hover:bg-indigo-200 active:scale-95 transition disabled:opacity-50"
+            className="flex flex-col items-center justify-center py-3.5 px-1 rounded-xl bg-slate-100 text-slate-800 font-semibold text-xs border border-slate-300 hover:bg-slate-200 active:scale-95 transition disabled:opacity-50"
           >
             <span className="text-xs font-bold mb-0.5">Скорее Б</span>
             <span className="text-[10px] opacity-70">+1.0 б</span>
@@ -336,7 +345,7 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
             type="button"
             disabled={submitting}
             onClick={() => handleChoice(2)}
-            className="flex flex-col items-center justify-center py-3.5 px-1 rounded-xl bg-indigo-600 text-white font-bold text-xs shadow hover:bg-indigo-700 active:scale-95 transition disabled:opacity-50"
+            className="flex flex-col items-center justify-center py-3.5 px-1 rounded-xl bg-slate-800 text-white font-bold text-xs shadow hover:bg-slate-900 active:scale-95 transition disabled:opacity-50"
           >
             <span className="text-sm font-black mb-0.5">Точно Б</span>
             <span className="text-[10px] opacity-80">+2.0 б</span>
