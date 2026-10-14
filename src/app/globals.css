@@ -30,3 +30,27 @@ html, body {
 .transition-smooth {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Professional Print Styles for Gallup 34 Full Report */
+@media print {
+  body {
+    background: white !important;
+    color: #0f172a !important;
+    user-select: auto !important;
+  }
+
+  .print-page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  .print-avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  @page {
+    margin: 1.2cm;
+    size: A4 portrait;
+  }
+}
