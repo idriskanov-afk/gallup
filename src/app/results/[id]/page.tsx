@@ -45,22 +45,52 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         if (!res.ok) {
           throw new Error(data.error || "Не удалось загрузить результаты");
         }
-
-        if (data.session.status !== "completed" || !data.results) {
-          router.replace(`/test/${sessionId}`);
-          return;
+        if (data.session?.status === "completed" && data.results) {
+          setSession(data.session);
+          setResults(data.results);
+          confetti({
+            particleCount: 80,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+        } else {
+          // Check localStorage fallback
+          if (typeof window !== "undefined") {
+            const localStored = localStorage.getItem(`gallup_results_${sessionId}`);
+            if (localStored) {
+              const parsed = JSON.parse(localStored);
+              setResults(parsed);
+              setSession(data.session || {
+                id: sessionId,
+                employeeName: "Сотрудник",
+                employeeRole: "Сотрудник",
+              });
+              confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+            } else {
+              router.replace(`/test/${sessionId}`);
+              return;
+            }
+          }
         }
-
-        setSession(data.session);
-        setResults(data.results);
-
-        // Confetti burst
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 },
-        });
       } catch (err: any) {
+        // Fallback to local storage
+        if (typeof window !== "undefined") {
+          const localStored = localStorage.getItem(`gallup_results_${sessionId}`);
+          if (localStored) {
+            try {
+              const parsed = JSON.parse(localStored);
+              setResults(parsed);
+              setSession({
+                id: sessionId,
+                employeeName: "Сотрудник",
+                employeeRole: "Сотрудник",
+              });
+              confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+              setLoading(false);
+              return;
+            } catch {}
+          }
+        }
         setError(err.message);
       } finally {
         setLoading(false);

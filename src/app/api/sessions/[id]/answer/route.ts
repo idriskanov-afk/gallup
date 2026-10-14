@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { calculateAssessment, ResponseRecord } from "@/lib/scoring";
 import { TalentItem } from "@/lib/types";
+import { TALENTS_DATA } from "@/lib/data/talents";
+import { QUESTIONS_DATA } from "@/lib/data/questions";
 
 export async function POST(
   req: Request,
@@ -10,108 +12,123 @@ export async function POST(
   try {
     const { id: sessionId } = await params;
     const body = await req.json();
-    const { questionId, choice, responseTimeMs } = body;
+    const { questionId, choice, responseTimeMs, allResponses } = body;
 
-    const session = await prisma.testSession.findUnique({
-      where: { id: sessionId },
-    });
+    const totalQuestions = QUESTIONS_DATA.length;
 
-    if (!session) {
-      return NextResponse.json({ error: "Сессия не найдена" }, { status: 404 });
-    }
-
-    if (session.status === "completed") {
-      return NextResponse.json({
-        completed: true,
-        message: "Тест уже завершен",
-        results: session.resultsJson ? JSON.parse(session.resultsJson) : null,
-      });
-    }
-
-    // Record response
-    await prisma.response.create({
-      data: {
-        sessionId,
-        questionId: Number(questionId),
-        choice: choice === null || choice === undefined ? null : Number(choice),
-        responseTimeMs: Math.max(0, Number(responseTimeMs) || 0),
-      },
-    });
-
-    const nextIndex = session.currentQuestionIndex + 1;
-    const totalQuestions = await prisma.question.count();
-
-    if (nextIndex >= totalQuestions) {
-      // Calculate results
-      const rawTalents = await prisma.talent.findMany({
-        orderBy: { id: "asc" },
+    // Optional DB recording with graceful error catch
+    let currentDbIndex = 0;
+    try {
+      const session = await prisma.testSession.findUnique({
+        where: { id: sessionId },
       });
 
-      const talents: TalentItem[] = rawTalents.map((t) => ({
+      if (session) {
+        currentDbIndex = session.currentQuestionIndex;
+        await prisma.response.create({
+          data: {
+            sessionId,
+            questionId: Number(questionId),
+            choice: choice === null || choice === undefined ? null : Number(choice),
+            responseTimeMs: Math.max(0, Number(responseTimeMs) || 0),
+          },
+        });
+      }
+    } catch (dbErr) {
+      console.warn("DB response record warning (proceeding):", dbErr);
+    }
+
+    const nextIndex = Number(body.currentIndex ?? currentDbIndex) + 1;
+
+    // Check if test completed
+    if (nextIndex >= totalQuestions || (allResponses && allResponses.length >= totalQuestions)) {
+      const talents: TalentItem[] = TALENTS_DATA.map((t) => ({
         id: t.id,
         slug: t.slug,
         nameRu: t.nameRu,
         nameEn: t.nameEn,
         domain: t.domain as any,
         shortDescription: t.shortDescription,
-        managerGuide: JSON.parse(t.managerGuide),
+        managerGuide: t.managerGuide,
       }));
 
-      const responsesWithQuestions = await prisma.response.findMany({
-        where: { sessionId },
-        include: { question: true },
-      });
-
-      const records: ResponseRecord[] = responsesWithQuestions.map((r) => ({
-        questionId: r.questionId,
-        talentAId: r.question.talentAId,
-        talentBId: r.question.talentBId,
-        choice: r.choice,
-        responseTimeMs: r.responseTimeMs,
-      }));
+      // Collect records
+      let records: ResponseRecord[] = [];
+      if (allResponses && Array.isArray(allResponses) && allResponses.length > 0) {
+        records = allResponses.map((r: any) => {
+          const q = QUESTIONS_DATA.find((item) => item.orderIndex === r.questionIndex || item.orderIndex === r.questionId);
+          return {
+            questionId: r.questionId,
+            talentAId: q?.talentAId ?? 1,
+            talentBId: q?.talentBId ?? 2,
+            choice: r.choice,
+            responseTimeMs: r.responseTimeMs || 0,
+          };
+        });
+      } else {
+        try {
+          const dbResponses = await prisma.response.findMany({
+            where: { sessionId },
+            include: { question: true },
+          });
+          records = dbResponses.map((r) => ({
+            questionId: r.questionId,
+            talentAId: r.question.talentAId,
+            talentBId: r.question.talentBId,
+            choice: r.choice,
+            responseTimeMs: r.responseTimeMs,
+          }));
+        } catch {
+          // fallback empty
+        }
+      }
 
       const assessmentResult = calculateAssessment(talents, records);
 
-      const updatedSession = await prisma.testSession.update({
-        where: { id: sessionId },
-        data: {
-          currentQuestionIndex: nextIndex,
-          status: "completed",
-          completedAt: new Date(),
-          resultsJson: JSON.stringify(assessmentResult),
-        },
-      });
+      // Attempt to save to DB
+      try {
+        await prisma.testSession.update({
+          where: { id: sessionId },
+          data: {
+            currentQuestionIndex: totalQuestions,
+            status: "completed",
+            completedAt: new Date(),
+            resultsJson: JSON.stringify(assessmentResult),
+          },
+        });
+      } catch (saveErr) {
+        console.warn("Could not save to DB (returning result directly):", saveErr);
+      }
 
       return NextResponse.json({
         completed: true,
-        currentQuestionIndex: nextIndex,
+        currentQuestionIndex: totalQuestions,
         results: assessmentResult,
       });
-    } else {
-      // Advance to next question
+    }
+
+    // Advance to next question
+    try {
       await prisma.testSession.update({
         where: { id: sessionId },
         data: { currentQuestionIndex: nextIndex },
       });
+    } catch {}
 
-      const nextQuestion = await prisma.question.findFirst({
-        where: { orderIndex: nextIndex + 1 },
-        select: {
-          id: true,
-          orderIndex: true,
-          statementA: true,
-          talentAId: true,
-          statementB: true,
-          talentBId: true,
-        },
-      });
+    const nextQData = QUESTIONS_DATA.find((q) => q.orderIndex === nextIndex + 1) || QUESTIONS_DATA[0];
 
-      return NextResponse.json({
-        completed: false,
-        currentQuestionIndex: nextIndex,
-        nextQuestion,
-      });
-    }
+    return NextResponse.json({
+      completed: false,
+      currentQuestionIndex: nextIndex,
+      nextQuestion: {
+        id: nextQData.orderIndex,
+        orderIndex: nextQData.orderIndex,
+        statementA: nextQData.statementA,
+        talentAId: nextQData.talentAId,
+        statementB: nextQData.statementB,
+        talentBId: nextQData.talentBId,
+      },
+    });
   } catch (error) {
     console.error("Error submitting answer:", error);
     return NextResponse.json({ error: "Внутренняя ошибка сервера" }, { status: 500 });

@@ -2,24 +2,11 @@
 
 import { useEffect, useState, useRef, use } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Zap, AlertCircle, ArrowRight } from "lucide-react";
-
-interface QuestionData {
-  id: number;
-  orderIndex: number;
-  statementA: string;
-  talentAId: number;
-  statementB: string;
-  talentBId: number;
-}
-
-interface SessionData {
-  id: string;
-  employeeName: string;
-  employeeRole: string;
-  status: string;
-  currentQuestionIndex: number;
-}
+import { Clock, Zap, AlertCircle } from "lucide-react";
+import { QUESTIONS_DATA } from "@/lib/data/questions";
+import { TALENTS_DATA } from "@/lib/data/talents";
+import { calculateAssessment, ResponseRecord } from "@/lib/scoring";
+import { TalentItem } from "@/lib/types";
 
 const TOTAL_QUESTIONS = 68;
 const QUESTION_TIMEOUT_SECONDS = 20;
@@ -29,18 +16,19 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
   const sessionId = resolvedParams.id;
   const router = useRouter();
 
-  const [session, setSession] = useState<SessionData | null>(null);
-  const [currentQuestion, setCurrentQuestion] = useState<QuestionData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0); // 0 to 67
   const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [employeeName, setEmployeeName] = useState("Сотрудник");
+  const [responses, setResponses] = useState<
+    Array<{ questionId: number; choice: number | null; responseTimeMs: number }>
+  >([]);
 
   // Timer states
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIMEOUT_SECONDS);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const startTimeRef = useRef<number>(0);
+  const startTimeRef = useRef<number>(Date.now());
 
-  // Telegram Haptic
+  // Haptic feedback for Telegram WebApp
   const triggerHaptic = (type: "light" | "medium" | "heavy" = "light") => {
     if (typeof window !== "undefined") {
       const tg = (window as any).Telegram?.WebApp;
@@ -48,40 +36,40 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
     }
   };
 
-  // Fetch initial session & question
+  // On mount: restore session or initialize
   useEffect(() => {
-    async function loadSession() {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/sessions/${sessionId}`);
-        const data = await res.json();
+    startTimeRef.current = Date.now();
+    setTimeLeft(QUESTION_TIMEOUT_SECONDS);
 
-        if (!res.ok) {
-          throw new Error(data.error || "Не удалось загрузить тест");
-        }
+    // Try reading active session info from localStorage
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("gallup_active_session");
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed.employeeName) setEmployeeName(parsed.employeeName);
+        } catch {}
+      }
 
-        if (data.session.status === "completed") {
-          router.replace(`/results/${sessionId}`);
-          return;
-        }
-
-        setSession(data.session);
-        setCurrentQuestion(data.currentQuestion);
-        startTimeRef.current = performance.now();
-        setTimeLeft(QUESTION_TIMEOUT_SECONDS);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      // Check if partially answered
+      const storedResponses = localStorage.getItem(`gallup_responses_${sessionId}`);
+      if (storedResponses) {
+        try {
+          const parsedResp = JSON.parse(storedResponses);
+          if (Array.isArray(parsedResp) && parsedResp.length > 0) {
+            setResponses(parsedResp);
+            if (parsedResp.length < TOTAL_QUESTIONS) {
+              setCurrentIndex(parsedResp.length);
+            }
+          }
+        } catch {}
       }
     }
+  }, [sessionId]);
 
-    loadSession();
-  }, [sessionId, router]);
-
-  // Timer countdown loop
+  // Timer tick
   useEffect(() => {
-    if (!currentQuestion || submitting) return;
+    if (submitting) return;
 
     timerRef.current = setInterval(() => {
       setTimeLeft((prev) => {
@@ -97,96 +85,102 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [currentQuestion, submitting]);
+  }, [currentIndex, submitting]);
 
-  // Timeout handler: automatic submission with choice = null
+  // Timeout: choice = null (0 points)
   const handleTimeout = async () => {
-    if (submitting || !currentQuestion) return;
+    if (submitting) return;
     triggerHaptic("heavy");
-    await submitAnswer(null, QUESTION_TIMEOUT_SECONDS * 1000);
+    await recordChoiceAndAdvance(null, QUESTION_TIMEOUT_SECONDS * 1000);
   };
 
-  // User click on one of the 5 options
+  // User choice button click
   const handleChoice = async (choiceValue: number) => {
-    if (submitting || !currentQuestion) return;
+    if (submitting) return;
     triggerHaptic("medium");
-    const elapsedMs = Math.round(performance.now() - startTimeRef.current);
-    await submitAnswer(choiceValue, elapsedMs);
+    const elapsedMs = Math.round(Date.now() - startTimeRef.current);
+    await recordChoiceAndAdvance(choiceValue, elapsedMs);
   };
 
-  const submitAnswer = async (choice: number | null, responseTimeMs: number) => {
-    if (!currentQuestion) return;
+  const recordChoiceAndAdvance = async (choice: number | null, responseTimeMs: number) => {
     setSubmitting(true);
     if (timerRef.current) clearInterval(timerRef.current);
 
-    try {
-      const res = await fetch(`/api/sessions/${sessionId}/answer`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          questionId: currentQuestion.id,
-          choice,
-          responseTimeMs,
-        }),
+    const currentQ = QUESTIONS_DATA[currentIndex] || QUESTIONS_DATA[0];
+    const newRecord = {
+      questionId: currentQ.orderIndex,
+      choice,
+      responseTimeMs,
+    };
+
+    const updatedResponses = [...responses, newRecord];
+    setResponses(updatedResponses);
+
+    // Save to localStorage so no progress is ever lost
+    if (typeof window !== "undefined") {
+      localStorage.setItem(`gallup_responses_${sessionId}`, JSON.stringify(updatedResponses));
+    }
+
+    const nextIdx = currentIndex + 1;
+
+    // Send async background sync to server (non-blocking)
+    fetch(`/api/sessions/${sessionId}/answer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        questionId: currentQ.orderIndex,
+        choice,
+        responseTimeMs,
+        currentIndex,
+        allResponses: nextIdx >= TOTAL_QUESTIONS ? updatedResponses : undefined,
+      }),
+    }).catch((e) => console.warn("Background sync warning:", e));
+
+    if (nextIdx >= TOTAL_QUESTIONS) {
+      // Assessment finished!
+      // Compute client-side immediately so user gets 0ms delay!
+      const talents: TalentItem[] = TALENTS_DATA.map((t) => ({
+        id: t.id,
+        slug: t.slug,
+        nameRu: t.nameRu,
+        nameEn: t.nameEn,
+        domain: t.domain as any,
+        shortDescription: t.shortDescription,
+        managerGuide: t.managerGuide,
+      }));
+
+      const records: ResponseRecord[] = updatedResponses.map((r, idx) => {
+        const q = QUESTIONS_DATA[idx] || QUESTIONS_DATA[0];
+        return {
+          questionId: r.questionId,
+          talentAId: q.talentAId,
+          talentBId: q.talentBId,
+          choice: r.choice,
+          responseTimeMs: r.responseTimeMs,
+        };
       });
 
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "Ошибка сохранения ответа");
+      const assessmentResult = calculateAssessment(talents, records);
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem(`gallup_results_${sessionId}`, JSON.stringify(assessmentResult));
+        localStorage.removeItem("gallup_active_session");
       }
 
-      if (data.completed) {
-        // Test completed!
-        localStorage.removeItem("gallup_active_session");
-        router.replace(`/results/${sessionId}`);
-      } else {
-        // Advance to next question
-        setCurrentQuestion(data.nextQuestion);
-        setSession((prev) =>
-          prev
-            ? { ...prev, currentQuestionIndex: data.currentQuestionIndex }
-            : null
-        );
-        setTimeLeft(QUESTION_TIMEOUT_SECONDS);
-        startTimeRef.current = performance.now();
-        setSubmitting(false);
-      }
-    } catch (err: any) {
-      setError(err.message);
+      router.replace(`/results/${sessionId}`);
+    } else {
+      // Advance to next question instantly
+      setCurrentIndex(nextIdx);
+      setTimeLeft(QUESTION_TIMEOUT_SECONDS);
+      startTimeRef.current = Date.now();
       setSubmitting(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[70vh] p-6 space-y-4">
-        <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm font-medium text-slate-600">Загрузка вопросов тестирования...</p>
-      </div>
-    );
-  }
-
-  if (error || !currentQuestion) {
-    return (
-      <div className="p-6 text-center space-y-4">
-        <div className="p-4 bg-red-50 text-red-700 rounded-2xl border border-red-200">
-          <AlertCircle className="w-8 h-8 mx-auto mb-2 text-red-500" />
-          <h2 className="font-bold text-base">Ошибка загрузки</h2>
-          <p className="text-xs mt-1">{error || "Вопрос не найден"}</p>
-        </div>
-        <button
-          onClick={() => router.push("/")}
-          className="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-semibold"
-        >
-          Вернуться на главную
-        </button>
-      </div>
-    );
-  }
-
-  const questionNum = currentQuestion.orderIndex;
+  const currentQuestion = QUESTIONS_DATA[currentIndex] || QUESTIONS_DATA[0];
+  const questionNum = currentIndex + 1;
   const progressPercent = Math.round((questionNum / TOTAL_QUESTIONS) * 100);
-  const isSpeedBonusEligible = timeLeft > 12; // 20 - 8 = 12 sec left
+  const isSpeedBonusEligible = timeLeft > 12; // first 8 seconds
   const timerPercent = (timeLeft / QUESTION_TIMEOUT_SECONDS) * 100;
 
   // Dynamic timer color
@@ -210,7 +204,7 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
               Вопрос {questionNum} / {TOTAL_QUESTIONS}
             </span>
             <span className="text-slate-400 font-normal hidden sm:inline">
-              ({session?.employeeName})
+              ({employeeName})
             </span>
           </div>
 
@@ -221,7 +215,7 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
           </div>
         </div>
 
-        {/* Global Test Progress Bar */}
+        {/* Global Progress Bar */}
         <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
           <div
             className="bg-purple-600 h-full transition-all duration-300 ease-out"
@@ -241,9 +235,7 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
         <div className="flex items-center justify-between text-[11px] px-1">
           <div
             className={`flex items-center gap-1 transition-all ${
-              isSpeedBonusEligible
-                ? "text-amber-600 font-bold"
-                : "text-slate-400"
+              isSpeedBonusEligible ? "text-amber-600 font-bold" : "text-slate-400"
             }`}
           >
             <Zap className={`w-3 h-3 ${isSpeedBonusEligible ? "text-amber-500 fill-amber-500" : ""}`} />
@@ -353,7 +345,7 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
 
         {submitting && (
           <div className="text-center text-[11px] text-slate-400 pt-1 animate-pulse">
-            Фиксация ответа...
+            Переход к следующему вопросу...
           </div>
         )}
       </div>
