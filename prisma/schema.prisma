@@ -1,0 +1,58 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Talent {
+  id               Int        @id @default(autoincrement())
+  slug             String     @unique
+  nameRu           String
+  nameEn           String
+  domain           String     // executing | influencing | relationship | strategic
+  shortDescription String
+  managerGuide     String     // JSON containing tasks, motivation, control, triggers
+
+  questionsA       Question[] @relation("TalentA")
+  questionsB       Question[] @relation("TalentB")
+}
+
+model Question {
+  id          Int        @id @default(autoincrement())
+  statementA  String
+  talentAId   Int
+  talentA     Talent     @relation("TalentA", fields: [talentAId], references: [id])
+  statementB  String
+  talentBId   Int
+  talentB     Talent     @relation("TalentB", fields: [talentBId], references: [id])
+  orderIndex  Int
+  responses   Response[]
+}
+
+model TestSession {
+  id                   String     @id @default(uuid())
+  employeeName         String
+  employeeRole         String     // e.g. Промоутер, Ассистент, Оператор КЦ, Менеджер
+  status               String     @default("in_progress") // in_progress | completed
+  currentQuestionIndex Int        @default(0)
+  startedAt            DateTime   @default(now())
+  completedAt          DateTime?
+  resultsJson          String?    // JSON string of full 34 ranking results
+  responses            Response[]
+}
+
+model Response {
+  id             Int         @id @default(autoincrement())
+  sessionId      String
+  session        TestSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId     Int
+  question       Question    @relation(fields: [questionId], references: [id])
+  choice         Int?        // -2, -1, 0, 1, 2, or null (timeout)
+  responseTimeMs Int
+  createdAt      DateTime    @default(now())
+
+  @@index([sessionId])
+}
