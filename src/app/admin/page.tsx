@@ -30,7 +30,9 @@ import {
   Check,
   ExternalLink,
   Printer,
-  Sparkles
+  Sparkles,
+  Download,
+  Upload
 } from "lucide-react";
 import { AssessmentResult, Domain, ScoredTalent } from "@/lib/types";
 
@@ -83,6 +85,60 @@ export default function AdminDashboardPage() {
       setTimeout(() => setCopiedId(null), 2500);
     } catch (err) {
       console.warn("Failed to copy link:", err);
+    }
+  };
+
+  const [importing, setImporting] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [backupNotice, setBackupNotice] = useState<string | null>(null);
+
+  const handleExportBackup = async () => {
+    try {
+      setExporting(true);
+      const res = await fetch("/api/admin/backup");
+      const data = await res.json();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `35_health_gallup_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setBackupNotice(`Резервная копия (${data.totalSessions || 0} сотрудников) успешно сохранена на ваш компьютер!`);
+      setTimeout(() => setBackupNotice(null), 5000);
+    } catch (err: any) {
+      alert("Ошибка при выгрузке бэкапа: " + err.message);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setImporting(true);
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      const res = await fetch("/api/admin/backup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsed),
+      });
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Ошибка восстановления");
+
+      setBackupNotice(result.message || "Данные сотрудников успешно восстановлены!");
+      setTimeout(() => setBackupNotice(null), 5000);
+      fetchData();
+    } catch (err: any) {
+      alert("Ошибка восстановления из файла: " + err.message);
+    } finally {
+      setImporting(false);
+      e.target.value = "";
     }
   };
 
@@ -151,7 +207,34 @@ export default function AdminDashboardPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={handleExportBackup}
+            disabled={exporting}
+            title="Скачать JSON-файл со всеми результатами сотрудников на компьютер"
+            className="px-3 py-2 text-xs font-semibold rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 flex items-center gap-1.5 transition disabled:opacity-50 shadow-sm"
+          >
+            <Download className="w-3.5 h-3.5" />
+            {exporting ? "Выгрузка..." : "Бэкап (JSON)"}
+          </button>
+
+          <label
+            title="Восстановить сотрудников и тесты из ранее сохраненного файла"
+            className={`px-3 py-2 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 flex items-center gap-1.5 transition cursor-pointer shadow-sm ${
+              importing ? "opacity-50 pointer-events-none" : ""
+            }`}
+          >
+            <Upload className="w-3.5 h-3.5" />
+            {importing ? "Импорт..." : "Восстановить"}
+            <input
+              type="file"
+              accept=".json,application/json"
+              className="hidden"
+              onChange={handleImportFile}
+              disabled={importing}
+            />
+          </label>
+
           <button
             onClick={() => router.push("/")}
             className="px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 transition"
@@ -161,6 +244,19 @@ export default function AdminDashboardPage() {
           </button>
         </div>
       </div>
+
+      {/* Backup Notification */}
+      {backupNotice && (
+        <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 text-xs font-medium flex items-center justify-between animate-fadeIn shadow-sm">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-teal-600 flex-shrink-0" />
+            <span>{backupNotice}</span>
+          </div>
+          <button onClick={() => setBackupNotice(null)} className="text-teal-600 hover:text-teal-800">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200">

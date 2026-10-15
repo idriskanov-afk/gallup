@@ -7,16 +7,18 @@ const prisma = new PrismaClient();
 async function main() {
   console.log("Starting database seeding...");
 
-  // Clear existing data
-  await prisma.response.deleteMany();
-  await prisma.testSession.deleteMany();
-  await prisma.question.deleteMany();
-  await prisma.talent.deleteMany();
-
-  console.log("Seeding 34 talents...");
+  console.log("Checking and upserting 34 talents...");
   for (const t of TALENTS_DATA) {
-    await prisma.talent.create({
-      data: {
+    await prisma.talent.upsert({
+      where: { slug: t.slug },
+      update: {
+        nameRu: t.nameRu,
+        nameEn: t.nameEn,
+        domain: t.domain,
+        shortDescription: t.shortDescription,
+        managerGuide: JSON.stringify(t.managerGuide),
+      },
+      create: {
         id: t.id,
         slug: t.slug,
         nameRu: t.nameRu,
@@ -28,17 +30,33 @@ async function main() {
     });
   }
 
-  console.log(`Seeding ${QUESTIONS_DATA.length} multi-context paired questions...`);
+  console.log(`Checking and syncing ${QUESTIONS_DATA.length} multi-context paired questions...`);
   for (const q of QUESTIONS_DATA) {
-    await prisma.question.create({
-      data: {
-        orderIndex: q.orderIndex,
-        talentAId: q.talentAId,
-        statementA: q.statementA,
-        talentBId: q.talentBId,
-        statementB: q.statementB,
-      },
+    const existing = await prisma.question.findFirst({
+      where: { orderIndex: q.orderIndex },
     });
+
+    if (existing) {
+      await prisma.question.update({
+        where: { id: existing.id },
+        data: {
+          talentAId: q.talentAId,
+          statementA: q.statementA,
+          talentBId: q.talentBId,
+          statementB: q.statementB,
+        },
+      });
+    } else {
+      await prisma.question.create({
+        data: {
+          orderIndex: q.orderIndex,
+          talentAId: q.talentAId,
+          statementA: q.statementA,
+          talentBId: q.talentBId,
+          statementB: q.statementB,
+        },
+      });
+    }
   }
 
   const talentCount = await prisma.talent.count();

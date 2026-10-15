@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "postinstall": "prisma generate",
-    "build": "prisma generate && prisma db push --accept-data-loss && tsx prisma/seed.ts && next build",
+    "build": "node ./scripts/prepare-db.js && next build",
     "dev": "next dev",
     "start": "next start",
     "lint": "next lint",

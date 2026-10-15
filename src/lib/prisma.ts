@@ -3,6 +3,18 @@ import fs from "fs";
 import path from "path";
 
 function getDatabaseUrl(): string {
+  const envUrl = process.env.DATABASE_URL;
+
+  // If a cloud database (Postgres / Supabase / Neon / remote DB) is provided, prioritize it!
+  if (
+    envUrl &&
+    !envUrl.startsWith("file:./dev.db") &&
+    !envUrl.startsWith("file:dev.db") &&
+    !envUrl.includes("/tmp/")
+  ) {
+    return envUrl;
+  }
+
   if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
     const tmpDbPath = "/tmp/gallup.db";
     const bundledTemplatePath = path.join(process.cwd(), "prisma", "template.db");
@@ -26,7 +38,7 @@ function getDatabaseUrl(): string {
     return `file:${tmpDbPath}`;
   }
 
-  return process.env.DATABASE_URL || "file:./dev.db";
+  return envUrl || "file:./dev.db";
 }
 
 const dbUrl = getDatabaseUrl();
