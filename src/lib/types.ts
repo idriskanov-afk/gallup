@@ -17,6 +17,15 @@ export interface TalentItem {
   managerGuide: ManagerGuide;
 }
 
+export type QuestionCategory = 
+  | "teamwork"       // Командная работа и наставничество
+  | "crisis"         // Форс-мажоры и стресс
+  | "operations"     // Операционная точность и дисциплина
+  | "strategy"       // Стратегия, идеи и развитие
+  | "service"        // Сервис, эмпатия и клиенты
+  | "leadership"     // Лидерство и влияние
+  | "negotiation";   // Переговоры и договоренности
+
 export interface QuestionItem {
   id: number;
   orderIndex: number;
@@ -26,6 +35,8 @@ export interface QuestionItem {
   statementB: string;
   talentBId: number;
   talentB?: TalentItem;
+  category?: QuestionCategory;
+  categoryName?: string;
 }
 
 export interface ScoredTalent extends TalentItem {

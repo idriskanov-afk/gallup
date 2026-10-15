@@ -318,7 +318,7 @@ export default function AdminDashboardPage() {
                       </div>
                     ) : (
                       <div className="text-xs text-amber-600 font-medium">
-                        Тест в процессе (вопрос {s.currentQuestionIndex + 1} из 68)
+                        Тест в процессе (вопрос {s.currentQuestionIndex + 1} из 50)
                       </div>
                     )}
                   </div>

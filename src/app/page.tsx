@@ -188,7 +188,7 @@ export default function HomePage() {
               <span className="font-bold text-sm">У вас есть незавершенный тест</span>
             </div>
             <span className="text-xs bg-white/20 px-2.5 py-0.5 rounded-full font-semibold">
-              Вопрос {savedSession.currentQuestionIndex + 1} из 68
+              Вопрос {savedSession.currentQuestionIndex + 1} из 50
             </span>
           </div>
           <p className="text-xs text-teal-100">
@@ -265,10 +265,10 @@ export default function HomePage() {
             <Clock className="w-4 h-4 text-amber-500" /> Регламент тестирования команды:
           </div>
           <ul className="space-y-1.5 list-disc list-inside text-slate-600">
-            <li><span className="font-semibold text-slate-700">68 парных вопросов</span> — сравнивайте два утверждения.</li>
+            <li><span className="font-semibold text-slate-700">50 адаптивных ситуаций</span> — вопросы ветвятся под ваш реальный стиль.</li>
+            <li><span className="font-semibold text-slate-700">Многогранность</span> — сервис, форс-мажоры, регламенты, команда и стратегия.</li>
             <li><span className="font-semibold text-slate-700">20 секунд</span> на каждый вопрос с автопереходом.</li>
             <li><span className="font-semibold text-teal-600">Бонус +15%</span> при быстром инстинктивном ответе (до 8 сек).</li>
-            <li>Выбирайте первое, что откликается в реальной работе с клиентами.</li>
           </ul>
         </div>
 

@@ -2,13 +2,14 @@
 
 import { useEffect, useState, useRef, use } from "react";
 import { useRouter } from "next/navigation";
-import { Clock, Zap, AlertCircle } from "lucide-react";
+import { Clock, Zap, AlertCircle, Sparkles } from "lucide-react";
 import { QUESTIONS_DATA } from "@/lib/data/questions";
 import { TALENTS_DATA } from "@/lib/data/talents";
 import { calculateAssessment, ResponseRecord } from "@/lib/scoring";
 import { TalentItem } from "@/lib/types";
+import { ADAPTIVE_TOTAL_QUESTIONS, getNextAdaptiveQuestion } from "@/lib/adaptive";
 
-const TOTAL_QUESTIONS = 68;
+const TOTAL_QUESTIONS = ADAPTIVE_TOTAL_QUESTIONS;
 const QUESTION_TIMEOUT_SECONDS = 20;
 
 export default function TestPage({ params }: { params: Promise<{ id: string }> }) {
@@ -16,9 +17,10 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
   const sessionId = resolvedParams.id;
   const router = useRouter();
 
-  const [currentIndex, setCurrentIndex] = useState(0); // 0 to 67
+  const [currentIndex, setCurrentIndex] = useState(0); // 0 to 49
   const [submitting, setSubmitting] = useState(false);
   const [employeeName, setEmployeeName] = useState("Сотрудник");
+  const [questionHistory, setQuestionHistory] = useState<number[]>([]);
   const [responses, setResponses] = useState<
     Array<{ questionId: number; choice: number | null; responseTimeMs: number }>
   >([]);
@@ -51,18 +53,50 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
         } catch {}
       }
 
+      // Check if adaptive history exists
+      let existingHistory: number[] = [];
+      const storedHistory = localStorage.getItem(`gallup_adaptive_history_${sessionId}`);
+      if (storedHistory) {
+        try {
+          existingHistory = JSON.parse(storedHistory);
+        } catch {}
+      }
+
       // Check if partially answered
+      let existingResponses: Array<{ questionId: number; choice: number | null; responseTimeMs: number }> = [];
       const storedResponses = localStorage.getItem(`gallup_responses_${sessionId}`);
       if (storedResponses) {
         try {
           const parsedResp = JSON.parse(storedResponses);
           if (Array.isArray(parsedResp) && parsedResp.length > 0) {
+            existingResponses = parsedResp;
             setResponses(parsedResp);
-            if (parsedResp.length < TOTAL_QUESTIONS) {
-              setCurrentIndex(parsedResp.length);
-            }
           }
         } catch {}
+      }
+
+      // Ensure history has at least current question
+      if (!Array.isArray(existingHistory) || existingHistory.length === 0) {
+        const firstQ = getNextAdaptiveQuestion([], existingResponses, QUESTIONS_DATA, TOTAL_QUESTIONS);
+        existingHistory = [firstQ.orderIndex];
+      }
+
+      // If user had answered N questions, but history doesn't have N+1, advance it
+      while (existingHistory.length <= existingResponses.length && existingHistory.length < TOTAL_QUESTIONS) {
+        const nextQ = getNextAdaptiveQuestion(
+          existingHistory,
+          existingResponses.slice(0, existingHistory.length),
+          QUESTIONS_DATA,
+          TOTAL_QUESTIONS
+        );
+        existingHistory.push(nextQ.orderIndex);
+      }
+
+      setQuestionHistory(existingHistory);
+      localStorage.setItem(`gallup_adaptive_history_${sessionId}`, JSON.stringify(existingHistory));
+
+      if (existingResponses.length < TOTAL_QUESTIONS) {
+        setCurrentIndex(existingResponses.length);
       }
     }
   }, [sessionId]);
@@ -106,7 +140,8 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
     setSubmitting(true);
     if (timerRef.current) clearInterval(timerRef.current);
 
-    const currentQ = QUESTIONS_DATA[currentIndex] || QUESTIONS_DATA[0];
+    const currentQuestionId = questionHistory[currentIndex] ?? 1;
+    const currentQ = QUESTIONS_DATA.find((q) => q.orderIndex === currentQuestionId) || QUESTIONS_DATA[0];
     const newRecord = {
       questionId: currentQ.orderIndex,
       choice,
@@ -132,6 +167,7 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
         choice,
         responseTimeMs,
         currentIndex,
+        totalQuestions: TOTAL_QUESTIONS,
         allResponses: nextIdx >= TOTAL_QUESTIONS ? updatedResponses : undefined,
       }),
     }).catch((e) => console.warn("Background sync warning:", e));
@@ -149,8 +185,8 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
         managerGuide: t.managerGuide,
       }));
 
-      const records: ResponseRecord[] = updatedResponses.map((r, idx) => {
-        const q = QUESTIONS_DATA[idx] || QUESTIONS_DATA[0];
+      const records: ResponseRecord[] = updatedResponses.map((r) => {
+        const q = QUESTIONS_DATA.find((item) => item.orderIndex === r.questionId) || QUESTIONS_DATA[0];
         return {
           questionId: r.questionId,
           talentAId: q.talentAId,
@@ -169,7 +205,22 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
 
       router.replace(`/results/${sessionId}`);
     } else {
-      // Advance to next question instantly
+      // Dynamically select next adaptive question based on updated answers
+      let updatedHistory = [...questionHistory];
+      if (!updatedHistory[nextIdx]) {
+        const nextQ = getNextAdaptiveQuestion(
+          updatedHistory,
+          updatedResponses,
+          QUESTIONS_DATA,
+          TOTAL_QUESTIONS
+        );
+        updatedHistory.push(nextQ.orderIndex);
+        setQuestionHistory(updatedHistory);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(`gallup_adaptive_history_${sessionId}`, JSON.stringify(updatedHistory));
+        }
+      }
+
       setCurrentIndex(nextIdx);
       setTimeLeft(QUESTION_TIMEOUT_SECONDS);
       startTimeRef.current = Date.now();
@@ -177,7 +228,8 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
     }
   };
 
-  const currentQuestion = QUESTIONS_DATA[currentIndex] || QUESTIONS_DATA[0];
+  const currentQuestionId = questionHistory[currentIndex] ?? 1;
+  const currentQuestion = QUESTIONS_DATA.find((q) => q.orderIndex === currentQuestionId) || QUESTIONS_DATA[0];
   const questionNum = currentIndex + 1;
   const progressPercent = Math.round((questionNum / TOTAL_QUESTIONS) * 100);
   const isSpeedBonusEligible = timeLeft > 12; // first 8 seconds
@@ -240,8 +292,22 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
           />
         </div>
 
-        {/* Speed Bonus Badge */}
-        <div className="flex items-center justify-between text-[11px] px-1">
+        {/* Context Category & Adaptive Badge */}
+        <div className="flex items-center justify-between text-[11px] px-1 flex-wrap gap-1">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {currentQuestion.categoryName && (
+              <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
+                🏷️ {currentQuestion.categoryName}
+              </span>
+            )}
+            {currentIndex > 0 && (
+              <span className="text-[10px] text-teal-700 font-bold flex items-center gap-1 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200/80">
+                <Sparkles className="w-3 h-3 text-teal-600" />
+                Адаптивный подбор
+              </span>
+            )}
+          </div>
+
           <div
             className={`flex items-center gap-1 transition-all ${
               isSpeedBonusEligible ? "text-amber-600 font-bold" : "text-slate-400"
@@ -250,7 +316,6 @@ export default function TestPage({ params }: { params: Promise<{ id: string }> }
             <Zap className={`w-3 h-3 ${isSpeedBonusEligible ? "text-amber-500 fill-amber-500" : ""}`} />
             <span>Инстинкт: +15% бонус (ответ до 8 сек)</span>
           </div>
-          <span className="text-slate-400">{progressPercent}% пройдено</span>
         </div>
       </div>
 

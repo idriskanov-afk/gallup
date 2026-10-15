@@ -28,7 +28,7 @@ async function main() {
     });
   }
 
-  console.log("Seeding 68 cross-domain paired questions...");
+  console.log(`Seeding ${QUESTIONS_DATA.length} multi-context paired questions...`);
   for (const q of QUESTIONS_DATA) {
     await prisma.question.create({
       data: {

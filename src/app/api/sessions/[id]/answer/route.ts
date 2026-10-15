@@ -4,6 +4,7 @@ import { calculateAssessment, ResponseRecord } from "@/lib/scoring";
 import { TalentItem } from "@/lib/types";
 import { TALENTS_DATA } from "@/lib/data/talents";
 import { QUESTIONS_DATA } from "@/lib/data/questions";
+import { ADAPTIVE_TOTAL_QUESTIONS } from "@/lib/adaptive";
 
 export async function POST(
   req: Request,
@@ -14,7 +15,7 @@ export async function POST(
     const body = await req.json();
     const { questionId, choice, responseTimeMs, allResponses } = body;
 
-    const totalQuestions = QUESTIONS_DATA.length;
+    const totalQuestions = body.totalQuestions || ADAPTIVE_TOTAL_QUESTIONS;
 
     // Optional DB recording with graceful error catch
     let currentDbIndex = 0;
