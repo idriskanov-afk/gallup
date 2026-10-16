@@ -231,23 +231,23 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
       {/* ============================================================== */}
       {/* PRINT-ONLY OFFICIAL REPORT COVER HEADER */}
       {/* ============================================================== */}
-      <div className="hidden print:block border-b-2 border-slate-900 pb-4 mb-6">
+      <div className="hidden print:block border-b border-slate-900 pb-2 mb-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <img src="/logo.png" alt="35 Health Clubs" className="h-12 object-contain" />
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" alt="35 Health Clubs" className="h-8 object-contain" />
             <div>
-              <div className="text-xs font-black uppercase tracking-widest text-teal-700">
+              <div className="text-[8px] font-black uppercase tracking-widest text-teal-700">
                 35 HEALTH CLUBS • CliftonStrengths® 2.0 • Комплексный Бизнес-Профайлинг
               </div>
-              <h1 className="text-2xl font-black text-slate-900 mt-0.5">
+              <h1 className="text-base font-black text-slate-900 mt-0.5 leading-tight">
                 Персональное Досье Линейного Сотрудника
               </h1>
-              <p className="text-xs text-slate-600 mt-0.5">
+              <p className="text-[8px] text-slate-600">
                 Оценка 34 талантов Gallup + Мотивационная типология + Коммуникативный психотип DISC + Матрица продаж
               </p>
             </div>
           </div>
-          <div className="text-right text-xs text-slate-700 space-y-0.5 font-mono">
+          <div className="text-right text-[8px] text-slate-700 space-y-0.5 font-mono leading-tight">
             <div><span className="font-bold">Сотрудник:</span> {session?.employeeName}</div>
             <div><span className="font-bold">Должность:</span> {session?.employeeRole}</div>
             <div><span className="font-bold">Рекомендация:</span> {bestRoleRec.bestMatch.benchmark.nameRu} ({bestRoleRec.bestMatch.matchPercentage}%)</div>
@@ -469,55 +469,55 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
       <div className={`space-y-6 ${activeTab === "talents" ? "block" : "hidden print:block"}`}>
         
         {/* HOW TO READ THIS REPORT */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm space-y-2.5 text-xs text-slate-700 print-avoid-break">
-          <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
-            <BookOpen className="w-4 h-4 text-purple-600" />
+        <div className="p-4 sm:p-5 print:p-2 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm space-y-2.5 print:space-y-1 text-xs text-slate-700 print-avoid-break">
+          <div className="flex items-center gap-2 font-bold text-slate-900 text-sm print:text-[9px]">
+            <BookOpen className="w-4 h-4 print:w-3 print:h-3 text-purple-600" />
             Как читать и применять ваш отчет CliftonStrengths
           </div>
-          <p className="leading-relaxed">
+          <p className="leading-relaxed print:text-[8px] print:leading-snug">
             Методология Gallup ранжирует все 34 таланта по степени вашей естественной силы. Это карта ваших врожденных сильных сторон:
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-            <div className="p-2.5 rounded-xl bg-purple-100/50 border border-purple-200">
-              <span className="font-bold text-purple-900 block mb-0.5">🔥 Места 1–5: Топ-5</span>
-              <span className="text-[11px] text-purple-800 leading-tight block">
-                Ваши доминирующие таланты. Это ядро вашей суперсилы, дающее 80% успеха и драйва.
+          <div className="grid grid-cols-1 sm:grid-cols-3 print:grid-cols-3 gap-2 print:gap-1 pt-1 print:pt-0">
+            <div className="p-2.5 print:p-1 rounded-xl bg-purple-100/50 border border-purple-200">
+              <span className="font-bold text-purple-900 block mb-0.5 print:mb-0 text-xs print:text-[8px]">🔥 Места 1–5: Топ-5</span>
+              <span className="text-[11px] print:text-[7.5px] text-purple-800 leading-tight block">
+                Ваши доминирующие таланты. Ядро вашей суперсилы, дающее 80% успеха и драйва.
               </span>
             </div>
-            <div className="p-2.5 rounded-xl bg-slate-200/50 border border-slate-300">
-              <span className="font-bold text-slate-800 block mb-0.5">⚙️ Места 6–29: Опора</span>
-              <span className="text-[11px] text-slate-600 leading-tight block">
-                Поддерживающие таланты. Ваш надежный рабочий инструментарий, включаемый по ситуации.
+            <div className="p-2.5 print:p-1 rounded-xl bg-slate-200/50 border border-slate-300">
+              <span className="font-bold text-slate-800 block mb-0.5 print:mb-0 text-xs print:text-[8px]">⚙️ Места 6–29: Опора</span>
+              <span className="text-[11px] print:text-[7.5px] text-slate-600 leading-tight block">
+                Поддерживающие таланты. Ваш надежный рабочий инструментарий по ситуации.
               </span>
             </div>
-            <div className="p-2.5 rounded-xl bg-amber-100/50 border border-amber-200">
-              <span className="font-bold text-amber-900 block mb-0.5">🛡️ Места 30–34: Слепая зона</span>
-              <span className="text-[11px] text-amber-800 leading-tight block">
-                Энергозатратные сферы. Не ломайте себя — здесь эффективнее опереться на чек-листы или напарника.
+            <div className="p-2.5 print:p-1 rounded-xl bg-amber-100/50 border border-amber-200">
+              <span className="font-bold text-amber-900 block mb-0.5 print:mb-0 text-xs print:text-[8px]">🛡️ Места 30–34: Слепая зона</span>
+              <span className="text-[11px] print:text-[7.5px] text-amber-800 leading-tight block">
+                Энергозатратные сферы. Не ломайте себя — обопритесь на чек-листы или напарника.
               </span>
             </div>
           </div>
         </div>
 
         {/* DOMINANT DOMAIN SHOWCASE */}
-        <div className="p-5 rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950 text-white shadow-xl space-y-4 print:bg-white print:text-slate-900 print:border print:border-slate-300 print:shadow-none print-avoid-break">
+        <div className="p-5 print:p-2 rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950 text-white shadow-xl space-y-4 print:space-y-1 print:bg-white print:text-slate-900 print:border print:border-slate-300 print:shadow-none print-avoid-break">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-amber-400 print:text-amber-600" />
-              <span className="text-xs uppercase font-extrabold tracking-wider text-slate-300 print:text-slate-700">
+              <Trophy className="w-5 h-5 print:w-3.5 print:h-3.5 text-amber-400 print:text-amber-600" />
+              <span className="text-xs print:text-[8.5px] uppercase font-extrabold tracking-wider text-slate-300 print:text-slate-700">
                 Доминирующий домен эффективности:
               </span>
             </div>
-            <span className="text-xs font-bold px-3 py-1 rounded-full bg-white/20 text-white print:bg-slate-100 print:text-slate-900 print:border print:border-slate-300">
+            <span className="text-xs print:text-[8px] font-bold px-3 py-1 print:px-2 print:py-0.2 rounded-full bg-white/20 text-white print:bg-slate-100 print:text-slate-900 print:border print:border-slate-300">
               {dominantStyle.label}
             </span>
           </div>
 
-          <p className="text-xs text-slate-300 print:text-slate-700 leading-relaxed">
+          <p className="text-xs print:text-[8px] text-slate-300 print:text-slate-700 leading-relaxed print:leading-tight">
             {dominantStyle.desc}
           </p>
 
-          <div className="grid grid-cols-2 gap-2.5 pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 print:grid-cols-4 gap-2.5 print:gap-1 pt-1 print:pt-0">
             {results.domains.map((dom) => {
               const style = getDomainStyle(dom.domain);
               const Icon = style.icon;
@@ -526,26 +526,26 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               return (
                 <div
                   key={dom.domain}
-                  className={`p-3 rounded-xl border transition ${
+                  className={`p-3 print:p-1 rounded-xl border transition ${
                     isDominant
                       ? "bg-white/15 border-amber-400/60 shadow-inner print:bg-slate-50 print:border-slate-400"
                       : "bg-white/5 border-white/10 print:bg-white print:border-slate-200"
                   }`}
                 >
-                  <div className="flex items-center justify-between text-xs mb-1.5">
+                  <div className="flex items-center justify-between text-xs print:text-[7.5px] mb-1 print:mb-0.5">
                     <span className="font-bold flex items-center gap-1 text-white print:text-slate-900">
-                      <Icon className="w-3.5 h-3.5 opacity-80" />
+                      <Icon className="w-3.5 h-3.5 print:w-2.5 print:h-2.5 opacity-80" />
                       {dom.nameRu}
                     </span>
                     <span className="font-extrabold text-white print:text-slate-900">{dom.percentage}%</span>
                   </div>
-                  <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mb-1 print:bg-slate-200">
+                  <div className="w-full bg-white/10 h-1.5 print:h-1 rounded-full overflow-hidden mb-1 print:mb-0.5 print:bg-slate-200">
                     <div
                       className="h-full bg-gradient-to-r from-purple-400 to-emerald-400 rounded-full print:bg-purple-600"
                       style={{ width: `${dom.percentage}%` }}
                     />
                   </div>
-                  <div className="text-[10px] text-slate-300 print:text-slate-600 flex justify-between">
+                  <div className="text-[10px] print:text-[6.5px] text-slate-300 print:text-slate-600 flex justify-between">
                     <span>Баллы: {dom.score}</span>
                     <span>В Топ-5: {dom.talentsInTop5}</span>
                   </div>
@@ -556,18 +556,18 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         </div>
 
         {/* TOP-5 SIGNATURE THEMES */}
-        <div className="space-y-4 print-avoid-break">
-          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-            <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-500" />
+        <div className="space-y-4 print:space-y-1.5">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2 print:pb-1">
+            <h2 className="text-lg print:text-xs font-extrabold text-slate-900 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 print:w-3.5 print:h-3.5 text-amber-500" />
               Топ-5 Главных Талантов (Signature Themes)
             </h2>
-            <span className="text-xs text-slate-500 font-medium hidden sm:inline">
+            <span className="text-xs print:text-[8px] text-slate-500 font-medium">
               Ядро вашей профессиональной силы
             </span>
           </div>
 
-          <div className="space-y-4 print:space-y-2">
+          <div className="space-y-4 print:space-y-1.5">
             {results.top5.map((talent) => {
               const style = getDomainStyle(talent.domain);
               const insight = TALENT_INSIGHTS[talent.slug];
@@ -576,26 +576,26 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               return (
                 <div key={talent.id} className="print-avoid-break">
                   <div
-                    className={`p-4 sm:p-5 print:p-2.5 rounded-2xl bg-white border-2 ${style.border} shadow-sm print:shadow-none print:border-slate-300 print-avoid-break transition-all`}
+                    className={`p-4 sm:p-5 print:p-2 rounded-2xl print:rounded-xl bg-white border-2 ${style.border} shadow-sm print:shadow-none print:border print:border-slate-300 transition-all`}
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-3 print:gap-2">
-                        <div className="w-10 h-10 print:w-7 print:h-7 rounded-xl bg-purple-600 text-white font-black text-lg print:text-xs flex items-center justify-center shadow-sm flex-shrink-0">
+                    <div className="flex items-start justify-between gap-2 print:gap-1">
+                      <div className="flex items-center gap-3 print:gap-1.5">
+                        <div className="w-10 h-10 print:w-5 print:h-5 rounded-xl print:rounded-lg bg-purple-600 text-white font-black text-lg print:text-[9px] flex items-center justify-center shadow-sm flex-shrink-0">
                           #{talent.rank}
                         </div>
                         <div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <h3 className="font-extrabold text-slate-900 text-base print:text-xs">
+                          <div className="flex items-center gap-2 print:gap-1 flex-wrap">
+                            <h3 className="font-extrabold text-slate-900 text-base print:text-[9.5px] leading-tight">
                               {talent.nameRu}
                             </h3>
-                            <span className="text-xs print:text-[10px] text-slate-400 font-normal">
+                            <span className="text-xs print:text-[8px] text-slate-400 font-normal">
                               ({talent.nameEn})
                             </span>
-                            <span className={`text-[10px] print:text-[9px] font-bold px-2 py-0.5 rounded-full ${style.badge}`}>
+                            <span className={`text-[10px] print:text-[7px] font-bold px-2 py-0.5 print:px-1.5 print:py-0 rounded-full ${style.badge}`}>
                               {style.label}
                             </span>
                           </div>
-                          <div className="text-[11px] print:text-[9.5px] text-slate-500 mt-0.5">
+                          <div className="text-[11px] print:text-[7.5px] text-slate-500 mt-0.5 print:mt-0">
                             Балл: <span className="font-bold text-slate-700">{talent.score}</span> • Категоричных выборов: {talent.strongChoicesCount}
                           </div>
                         </div>
@@ -609,55 +609,55 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                       </button>
                     </div>
 
-                    <p className="text-xs sm:text-sm print:text-[10.5px] text-slate-700 mt-3 print:mt-1 leading-relaxed">
+                    <p className="text-xs sm:text-sm print:text-[8px] text-slate-700 mt-3 print:mt-0.5 leading-relaxed print:leading-tight">
                       {talent.shortDescription}
                     </p>
 
-                    <div className={`mt-4 print:mt-1.5 pt-3 print:pt-1.5 border-t border-slate-150 space-y-3 print:space-y-1.5 text-xs ${isExpanded ? "block" : "hidden print:block"}`}>
+                    <div className={`mt-4 print:mt-1 pt-3 print:pt-1 border-t border-slate-150 space-y-3 print:space-y-1 text-xs ${isExpanded ? "block" : "hidden print:block"}`}>
                       {insight && (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-2.5 print:gap-1.5">
-                          <div className="p-3 print:p-1.5 rounded-xl bg-emerald-50 border border-emerald-200">
-                            <span className="font-bold text-emerald-900 flex items-center gap-1.5 mb-0.5 text-xs print:text-[10px]">
-                              <Zap className="w-3.5 h-3.5 text-emerald-600" />
-                              В чем ваша суперсила:
+                        <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-3 gap-2.5 print:gap-1">
+                          <div className="p-3 print:p-1 rounded-xl bg-emerald-50 border border-emerald-200">
+                            <span className="font-bold text-emerald-900 flex items-center gap-1 mb-0.5 text-xs print:text-[7.5px]">
+                              <Zap className="w-3.5 h-3.5 print:w-2.5 print:h-2.5 text-emerald-600" />
+                              Суперсила:
                             </span>
-                            <p className="text-emerald-800 text-[11px] print:text-[9.5px] leading-relaxed">
+                            <p className="text-emerald-800 text-[11px] print:text-[7px] leading-tight">
                               {insight.superpower}
                             </p>
                           </div>
 
-                          <div className="p-3 print:p-1.5 rounded-xl bg-blue-50 border border-blue-200">
-                            <span className="font-bold text-blue-900 flex items-center gap-1.5 mb-0.5 text-xs print:text-[10px]">
-                              <Lightbulb className="w-3.5 h-3.5 text-blue-600" />
-                              Совет на каждую смену:
+                          <div className="p-3 print:p-1 rounded-xl bg-blue-50 border border-blue-200">
+                            <span className="font-bold text-blue-900 flex items-center gap-1 mb-0.5 text-xs print:text-[7.5px]">
+                              <Lightbulb className="w-3.5 h-3.5 print:w-2.5 print:h-2.5 text-blue-600" />
+                              Совет на смену:
                             </span>
-                            <p className="text-blue-800 text-[11px] print:text-[9.5px] leading-relaxed">
+                            <p className="text-blue-800 text-[11px] print:text-[7px] leading-tight">
                               {insight.actionTip}
                             </p>
                           </div>
 
-                          <div className="p-3 print:p-1.5 rounded-xl bg-amber-50 border border-amber-200 sm:col-span-2 print:col-span-2">
-                            <span className="font-bold text-amber-900 flex items-center gap-1.5 mb-0.5 text-xs print:text-[10px]">
-                              <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
-                              Ловушка таланта (Слепая зона сильной стороны):
+                          <div className="p-3 print:p-1 rounded-xl bg-amber-50 border border-amber-200 sm:col-span-2 print:col-span-1">
+                            <span className="font-bold text-amber-900 flex items-center gap-1 mb-0.5 text-xs print:text-[7.5px]">
+                              <AlertCircle className="w-3.5 h-3.5 print:w-2.5 print:h-2.5 text-amber-600" />
+                              Слепая зона:
                             </span>
-                            <p className="text-amber-800 text-[11px] print:text-[9.5px] leading-relaxed">
+                            <p className="text-amber-800 text-[11px] print:text-[7px] leading-tight">
                               {insight.watchOut}
                             </p>
                           </div>
                         </div>
                       )}
 
-                      <div className="p-3.5 print:p-2 rounded-xl bg-slate-50 border border-slate-200 space-y-2 print:space-y-1">
-                        <div className="font-bold text-slate-900 text-xs print:text-[10px] flex items-center gap-1.5">
-                          <Shield className="w-3.5 h-3.5 text-purple-600" />
-                          Инструкция для руководителя по этому таланту:
+                      <div className="p-3.5 print:p-1 rounded-xl bg-slate-50 border border-slate-200 space-y-2 print:space-y-0.5">
+                        <div className="font-bold text-slate-900 text-xs print:text-[7.5px] flex items-center gap-1">
+                          <Shield className="w-3.5 h-3.5 print:w-2.5 print:h-2.5 text-purple-600" />
+                          Инструкция для руководителя:
                         </div>
-                        <div className="grid grid-cols-1 print:grid-cols-2 gap-1.5 print:gap-1 text-slate-700 text-[11px] print:text-[9px]">
-                          <div><span className="font-bold text-slate-900">📌 Задачи в смене:</span> {talent.managerGuide.tasks}</div>
+                        <div className="grid grid-cols-1 print:grid-cols-4 gap-1.5 print:gap-1 text-slate-700 text-[11px] print:text-[6.8px] leading-tight">
+                          <div><span className="font-bold text-slate-900">📌 Задачи:</span> {talent.managerGuide.tasks}</div>
                           <div><span className="font-bold text-emerald-800">🎯 Мотивация:</span> {talent.managerGuide.motivation}</div>
                           <div><span className="font-bold text-indigo-800">🔍 Контроль:</span> {talent.managerGuide.control}</div>
-                          <div><span className="font-bold text-rose-800">⚠️ Триггеры демотивации:</span> {talent.managerGuide.demotivationTriggers}</div>
+                          <div><span className="font-bold text-rose-800">⚠️ Демотивация:</span> {talent.managerGuide.demotivationTriggers}</div>
                         </div>
                       </div>
                     </div>
@@ -671,9 +671,6 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                       </button>
                     )}
                   </div>
-                  {/* Clean page breaks: 2 talents on first sheet, 3 on second sheet */}
-                  {talent.rank === 2 && <div className="hidden print:block print-page-break" />}
-                  {talent.rank === 5 && <div className="hidden print:block print-page-break" />}
                 </div>
               );
             })}
@@ -681,26 +678,26 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         </div>
 
         {/* BLIND SPOTS (30-34) */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/80 border border-amber-200/90 space-y-2.5 print-avoid-break">
-          <div className="flex items-center gap-2 text-amber-900 font-bold text-sm">
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
+        <div className="p-4 sm:p-5 print:p-2 rounded-2xl bg-amber-50/80 border border-amber-200/90 space-y-2.5 print:space-y-1 print-avoid-break">
+          <div className="flex items-center gap-2 text-amber-900 font-bold text-sm print:text-[9px]">
+            <AlertTriangle className="w-4 h-4 print:w-3 print:h-3 text-amber-600" />
             Слепая зона (Места 30–34) — Зоны наибольших энергозатрат
           </div>
-          <p className="text-xs text-amber-800 leading-relaxed">
-            В методологии CliftonStrengths низкие ранги — это не дефекты. Это задачи, которые отнимают больше всего энергии. Не ломайте себя — используйте компенсаторные стратегии:
+          <p className="text-xs print:text-[7.5px] text-amber-800 leading-relaxed print:leading-snug">
+            В методологии CliftonStrengths низкие ранги — это не дефекты. Это задачи, которые отнимают больше всего энергии:
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-5 gap-2 print:gap-1 pt-1 print:pt-0">
             {results.blindSpots.map((b) => (
-              <div key={b.id} className="p-2.5 rounded-xl bg-white/90 border border-amber-200 text-xs">
-                <div className="flex justify-between items-center mb-0.5">
-                  <span className="font-bold text-slate-800">#{b.rank} {b.nameRu}</span>
-                  <span className="text-[10px] text-amber-700 font-bold uppercase">{b.domain}</span>
+              <div key={b.id} className="p-2.5 print:p-1 rounded-xl bg-white/90 border border-amber-200 text-xs print:text-[7px]">
+                <div className="flex justify-between items-center mb-0.5 print:mb-0">
+                  <span className="font-bold text-slate-800 print:text-[7.5px]">#{b.rank} {b.nameRu}</span>
+                  <span className="text-[10px] print:text-[6px] text-amber-700 font-bold uppercase">{b.domain}</span>
                 </div>
-                <p className="text-[10px] text-slate-500 leading-tight">
+                <p className="text-[10px] print:text-[6.5px] text-slate-500 leading-tight">
                   {b.shortDescription}
                 </p>
-                <div className="mt-1 pt-1 border-t border-amber-100 text-[10px] text-amber-900 font-medium">
-                  💡 Компенсация: шаблоны, чек-листы или помощь напарника.
+                <div className="mt-1 pt-1 print:mt-0.5 print:pt-0.5 border-t border-amber-100 text-[10px] print:text-[6px] text-amber-900 font-medium">
+                  💡 Чек-листы / напарник
                 </div>
               </div>
             ))}
@@ -708,7 +705,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         </div>
 
         {/* FULL 34 TALENTS TABLE */}
-        <div className="space-y-3 print-page-break">
+        <div className="space-y-3 print:space-y-1">
           <button
             onClick={() => setShowAll34(!showAll34)}
             className="w-full py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs flex items-center justify-between transition print:hidden"
@@ -720,10 +717,10 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             {showAll34 ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </button>
 
-          <div className={`space-y-3 ${showAll34 ? "block" : "hidden print:block"}`}>
-            <div className="border-b border-slate-200 pb-2">
-              <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                <FileSpreadsheet className="w-4 h-4 text-purple-600" />
+          <div className={`space-y-3 print:space-y-1 ${showAll34 ? "block" : "hidden print:block"}`}>
+            <div className="border-b border-slate-200 pb-2 print:pb-0.5">
+              <h3 className="text-base print:text-[9.5px] font-extrabold text-slate-900 flex items-center gap-2">
+                <FileSpreadsheet className="w-4 h-4 print:w-3 print:h-3 text-purple-600" />
                 Полный Реестр и Ранжирование Всех 34 Талантов
               </h3>
             </div>
@@ -846,58 +843,58 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
       {/* SECTION 2: MOTIVATION PROFILE (5 TYPES) */}
       {/* ============================================================== */}
       {motiv && (
-        <div className={`space-y-5 print-page-break ${activeTab === "motivation" ? "block" : "hidden print:block"}`}>
-          <div className="border-b border-slate-200 pb-2">
-            <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-              <Coins className="w-5 h-5 text-amber-500" />
+        <div className={`space-y-5 print:space-y-1.5 print-page-break ${activeTab === "motivation" ? "block" : "hidden print:block"}`}>
+          <div className="border-b border-slate-200 pb-2 print:pb-0.5">
+            <h2 className="text-lg print:text-xs font-black text-slate-900 flex items-center gap-2">
+              <Coins className="w-5 h-5 print:w-3.5 print:h-3.5 text-amber-500" />
               Мотивационный Профиль Сотрудника (5 типов)
             </h2>
-            <p className="text-xs text-slate-500">
-              Показывает истинные глубинные драйверы продуктивности, систему KPI и триггеры выгорания
+            <p className="text-xs print:text-[7.5px] text-slate-500">
+              Глубинные драйверы продуктивности, система KPI и триггеры выгорания
             </p>
           </div>
 
           {/* Dominant Motivation Card */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 text-white shadow-lg space-y-3 print:bg-white print:text-slate-900 print:border print:border-amber-400 print:shadow-none">
+          <div className="p-5 print:p-2 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 text-white shadow-lg space-y-3 print:space-y-0.5 print:bg-white print:text-slate-900 print:border print:border-amber-400 print:shadow-none print-avoid-break">
             <div className="flex items-center justify-between">
-              <span className="text-xs uppercase font-extrabold tracking-wider opacity-90">
+              <span className="text-xs print:text-[7.5px] uppercase font-extrabold tracking-wider opacity-90">
                 Ведущий тип мотивации:
               </span>
-              <span className="px-3 py-1 rounded-full bg-white/20 text-white font-extrabold text-xs print:bg-amber-100 print:text-amber-900">
+              <span className="px-3 py-1 print:px-1.5 print:py-0 rounded-full bg-white/20 text-white font-extrabold text-xs print:text-[7.5px] print:bg-amber-100 print:text-amber-900">
                 {motiv.dominant.percentage}% совпадения
               </span>
             </div>
 
-            <h3 className="text-2xl font-black text-white print:text-amber-900">
+            <h3 className="text-2xl print:text-xs font-black text-white print:text-amber-900 leading-tight">
               {motiv.dominant.badge}
             </h3>
 
             {/* Behavior & Appearance Details */}
             {MOTIVATION_TYPES[motiv.dominant.typeId] && (
-              <div className="space-y-2 text-xs pt-1 border-t border-white/20 print:border-slate-200">
-                <p className="opacity-95 leading-relaxed">
-                  <span className="font-bold">Поведение и стиль работы:</span> {MOTIVATION_TYPES[motiv.dominant.typeId].behavior}
+              <div className="space-y-2 print:space-y-0.5 text-xs print:text-[7px] pt-1 print:pt-0.5 border-t border-white/20 print:border-slate-200">
+                <p className="opacity-95 leading-relaxed print:leading-tight">
+                  <span className="font-bold">Поведение и стиль:</span> {MOTIVATION_TYPES[motiv.dominant.typeId].behavior}
                 </p>
-                <p className="opacity-95 leading-relaxed">
-                  <span className="font-bold">О чем говорит в кулуарах:</span> {MOTIVATION_TYPES[motiv.dominant.typeId].speechTopics}
+                <p className="opacity-95 leading-relaxed print:leading-tight">
+                  <span className="font-bold">В кулуарах:</span> {MOTIVATION_TYPES[motiv.dominant.typeId].speechTopics}
                 </p>
               </div>
             )}
           </div>
 
           {/* All 5 Types Breakdown */}
-          <div className="space-y-2">
-            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-              Баланс всех 5 мотивационных векторов:
+          <div className="space-y-2 print:space-y-0.5">
+            <h4 className="text-xs print:text-[8px] font-bold text-slate-700 uppercase tracking-wider">
+              Баланс 5 мотивационных векторов:
             </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-5 gap-2 print:gap-1">
               {motiv.all.map((m) => (
-                <div key={m.typeId} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm text-xs">
-                  <div className="flex justify-between items-center mb-1 font-bold text-slate-800">
-                    <span>{m.badge}</span>
-                    <span className="font-mono text-amber-600">{m.percentage}%</span>
+                <div key={m.typeId} className="p-3 print:p-1 rounded-xl bg-white border border-slate-200 shadow-sm text-xs print:text-[7px]">
+                  <div className="flex justify-between items-center mb-1 print:mb-0 font-bold text-slate-800">
+                    <span className="truncate">{m.badge}</span>
+                    <span className="font-mono text-amber-600 ml-1">{m.percentage}%</span>
                   </div>
-                  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-100 h-1.5 print:h-1 rounded-full overflow-hidden">
                     <div className="bg-amber-500 h-full rounded-full" style={{ width: `${m.percentage}%` }} />
                   </div>
                 </div>
@@ -906,37 +903,37 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           </div>
 
           {/* Management Guide for this Motivation Type */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2">
-              <span className="font-bold text-emerald-900 flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                Как правильно работать и мотивировать:
+          <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-3 gap-3 print:gap-1 text-xs print:text-[7.5px] print-avoid-break">
+            <div className="p-4 print:p-1.5 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-2 print:space-y-0.5">
+              <span className="font-bold text-emerald-900 flex items-center gap-1 text-xs print:text-[7.5px]">
+                <CheckCircle2 className="w-4 h-4 print:w-3 print:h-3 text-emerald-600" />
+                Как мотивировать:
               </span>
-              <ul className="list-disc list-inside space-y-1.5 text-emerald-800">
+              <ul className="list-disc list-inside space-y-1 print:space-y-0.5 text-emerald-800 leading-tight">
                 {motiv.howToWork.map((item, idx) => (
-                  <li key={idx} className="leading-relaxed">{item}</li>
+                  <li key={idx} className="leading-tight">{item}</li>
                 ))}
               </ul>
             </div>
 
-            <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-2">
-              <span className="font-bold text-rose-900 flex items-center gap-1.5">
-                <ShieldAlert className="w-4 h-4 text-rose-600" />
-                Что категорически нельзя делать (Триггеры увольнения):
+            <div className="p-4 print:p-1.5 rounded-2xl bg-rose-50 border border-rose-200 space-y-2 print:space-y-0.5">
+              <span className="font-bold text-rose-900 flex items-center gap-1 text-xs print:text-[7.5px]">
+                <ShieldAlert className="w-4 h-4 print:w-3 print:h-3 text-rose-600" />
+                Триггеры увольнения:
               </span>
-              <ul className="list-disc list-inside space-y-1.5 text-rose-800">
+              <ul className="list-disc list-inside space-y-1 print:space-y-0.5 text-rose-800 leading-tight">
                 {motiv.whatNotToDo.map((item, idx) => (
-                  <li key={idx} className="leading-relaxed">{item}</li>
+                  <li key={idx} className="leading-tight">{item}</li>
                 ))}
               </ul>
             </div>
 
-            <div className="p-4 rounded-2xl bg-purple-50 border border-purple-200 sm:col-span-2 space-y-1">
-              <span className="font-bold text-purple-900 flex items-center gap-1.5">
-                <Target className="w-4 h-4 text-purple-600" />
-                Рекомендованная система KPI и оплаты:
+            <div className="p-4 print:p-1.5 rounded-2xl bg-purple-50 border border-purple-200 sm:col-span-2 print:col-span-1 space-y-1 print:space-y-0.5">
+              <span className="font-bold text-purple-900 flex items-center gap-1 text-xs print:text-[7.5px]">
+                <Target className="w-4 h-4 print:w-3 print:h-3 text-purple-600" />
+                Рекомендация по KPI:
               </span>
-              <p className="text-purple-800 text-xs leading-relaxed">
+              <p className="text-purple-800 leading-tight">
                 {motiv.kpiRecommendations}
               </p>
             </div>
@@ -948,56 +945,56 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
       {/* SECTION 3: COMMUNICATION PSYCHOTYPE (DISC / 4 COLORS) */}
       {/* ============================================================== */}
       {psycho && (
-        <div className={`space-y-5 print-page-break ${activeTab === "psychotype" ? "block" : "hidden print:block"}`}>
-          <div className="border-b border-slate-200 pb-2">
-            <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-blue-600" />
+        <div className={`space-y-5 print:space-y-1.5 ${activeTab === "psychotype" ? "block" : "hidden print:block"}`}>
+          <div className="border-b border-slate-200 pb-2 print:pb-0.5">
+            <h2 className="text-lg print:text-xs font-black text-slate-900 flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 print:w-3.5 print:h-3.5 text-blue-600" />
               Коммуникативный Психотип (DISC / 4 Цвета)
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs print:text-[7.5px] text-slate-500">
               Манера речи, жесты, ключевые ценности и особенности поведения в команде и с клиентами
             </p>
           </div>
 
           {/* Dominant Psychotype Showcase */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-800 text-white shadow-lg space-y-3 print:bg-white print:text-slate-900 print:border print:border-blue-400 print:shadow-none">
+          <div className="p-5 print:p-2 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-800 text-white shadow-lg space-y-3 print:space-y-0.5 print:bg-white print:text-slate-900 print:border print:border-blue-400 print:shadow-none print-avoid-break">
             <div className="flex items-center justify-between">
-              <span className="text-xs uppercase font-extrabold tracking-wider opacity-90">
+              <span className="text-xs print:text-[7.5px] uppercase font-extrabold tracking-wider opacity-90">
                 Ведущий психотип:
               </span>
-              <span className="px-3 py-1 rounded-full bg-white/20 text-white font-extrabold text-xs print:bg-blue-100 print:text-blue-900">
+              <span className="px-3 py-1 print:px-1.5 print:py-0 rounded-full bg-white/20 text-white font-extrabold text-xs print:text-[7.5px] print:bg-blue-100 print:text-blue-900">
                 {psycho.dominant.percentage}% выраженности
               </span>
             </div>
 
-            <h3 className="text-2xl font-black text-white print:text-blue-900">
+            <h3 className="text-2xl print:text-xs font-black text-white print:text-blue-900 leading-tight">
               {psycho.dominant.badge}
             </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1 border-t border-white/20 print:border-slate-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-3 gap-2 print:gap-1 text-xs print:text-[7px] pt-1 print:pt-0.5 border-t border-white/20 print:border-slate-200">
               <div><span className="font-bold">Главная ценность:</span> {psycho.mainValue}</div>
-              <div><span className="font-bold">Ключевой вопрос мышления:</span> {psycho.keyQuestion}</div>
-              <div className="sm:col-span-2"><span className="font-bold">Манера речи:</span> {psycho.speechStyle}</div>
+              <div><span className="font-bold">Вопрос:</span> {psycho.keyQuestion}</div>
+              <div><span className="font-bold">Речь:</span> {psycho.speechStyle}</div>
             </div>
           </div>
 
           {/* 4 Psychotypes Distribution */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-4 print:grid-cols-4 gap-2 print:gap-1 text-xs">
             {psycho.all.map((p) => (
-              <div key={p.id} className="p-3 rounded-xl bg-white border border-slate-200 shadow-sm text-center">
-                <div className="font-black text-lg text-slate-800">{p.percentage}%</div>
-                <div className="font-bold text-slate-700 text-[11px] mt-0.5">{p.badge}</div>
+              <div key={p.id} className="p-3 print:p-1 rounded-xl bg-white border border-slate-200 shadow-sm text-center">
+                <div className="font-black text-lg print:text-xs text-slate-800 leading-tight">{p.percentage}%</div>
+                <div className="font-bold text-slate-700 text-[11px] print:text-[7.5px] mt-0.5">{p.badge}</div>
               </div>
             ))}
           </div>
 
           {/* How to Communicate */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
-            <div className="font-bold text-slate-900 flex items-center gap-1.5">
-              <Lightbulb className="w-4 h-4 text-amber-500" />
+          <div className="p-4 print:p-1.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs print:text-[7.5px] space-y-1 print:space-y-0.5 print-avoid-break">
+            <div className="font-bold text-slate-900 flex items-center gap-1.5 text-xs print:text-[7.5px]">
+              <Lightbulb className="w-4 h-4 print:w-3 print:h-3 text-amber-500" />
               Памятка руководителю: Как эффективно общаться с этим психотипом
             </div>
-            <p className="text-slate-700 leading-relaxed">
+            <p className="text-slate-700 leading-snug">
               {psycho.howToCommunicate}
             </p>
           </div>
@@ -1008,54 +1005,54 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
       {/* SECTION 4: SALES MATRIX & CLIENT COMPATIBILITY */}
       {/* ============================================================== */}
       {sales && (
-        <div className={`space-y-5 print-page-break ${activeTab === "sales" ? "block" : "hidden print:block"}`}>
-          <div className="border-b border-slate-200 pb-2">
-            <h2 className="text-lg font-black text-slate-900 flex items-center gap-2">
-              <Palette className="w-5 h-5 text-emerald-600" />
+        <div className={`space-y-5 print:space-y-1.5 print-page-break ${activeTab === "sales" ? "block" : "hidden print:block"}`}>
+          <div className="border-b border-slate-200 pb-2 print:pb-0.5">
+            <h2 className="text-lg print:text-xs font-black text-slate-900 flex items-center gap-2">
+              <Palette className="w-5 h-5 print:w-3.5 print:h-3.5 text-emerald-600" />
               Профиль в Продажах & Совместимость с Клиентами
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs print:text-[7.5px] text-slate-500">
               Цветовая гамма клиентов, преодоление барьера Крок-мозга, АРО-контакт и естественный стиль дожима
             </p>
           </div>
 
           {/* Result vs Process Scale */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2.5 text-xs">
+          <div className="p-4 sm:p-5 print:p-1.5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2.5 print:space-y-0.5 text-xs print:text-[7.5px]">
             <div className="flex justify-between items-center font-bold text-slate-800">
-              <span className="flex items-center gap-1.5">
-                <Crosshair className="w-4 h-4 text-teal-600" />
+              <span className="flex items-center gap-1">
+                <Crosshair className="w-4 h-4 print:w-3 print:h-3 text-teal-600" />
                 Ориентация: <span className="text-teal-700 font-black">{sales.orientationLabel}</span>
               </span>
-              <span className="font-mono text-teal-600 font-extrabold">{sales.resultOrientationPercent}% фокус на результат</span>
+              <span className="font-mono text-teal-600 font-extrabold">{sales.resultOrientationPercent}% результат</span>
             </div>
 
-            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden flex">
+            <div className="w-full bg-slate-100 h-2 print:h-1 rounded-full overflow-hidden flex">
               <div className="bg-teal-600 h-full" style={{ width: `${sales.resultOrientationPercent}%` }} />
               <div className="bg-emerald-500 h-full" style={{ width: `${100 - sales.resultOrientationPercent}%` }} />
             </div>
 
-            <div className="flex justify-between text-[10px] text-slate-500 font-semibold">
+            <div className="flex justify-between text-[10px] print:text-[6.5px] text-slate-500 font-semibold">
               <span>Цель, рекорды, скорость (Результатник)</span>
               <span>Регламент, стабильность, процесс (Процессник)</span>
             </div>
           </div>
 
           {/* Client Compatibility Cards (Best Match vs Challenge) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs print-avoid-break">
+          <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-3 print:gap-1.5 text-xs print-avoid-break">
             {/* Best Match */}
-            <div className="p-4 print:p-2.5 rounded-2xl bg-emerald-50 border-2 border-emerald-300 space-y-2 print:space-y-1 print-avoid-break">
-              <span className="text-[10px] uppercase font-black text-emerald-800 tracking-wider bg-emerald-200/60 px-2 py-0.5 rounded-full">
+            <div className="p-4 print:p-1.5 rounded-2xl bg-emerald-50 border-2 border-emerald-300 space-y-2 print:space-y-0.5 print-avoid-break">
+              <span className="text-[10px] print:text-[6.5px] uppercase font-black text-emerald-800 tracking-wider bg-emerald-200/60 px-2 py-0.5 print:px-1 print:py-0 rounded-full">
                 Идеальный клиент (Максимум конверсии)
               </span>
-              <h4 className="font-black text-sm text-emerald-950">
+              <h4 className="font-black text-sm print:text-[8px] text-emerald-950 leading-tight">
                 {sales.bestClientMatch.nameRu} ({sales.bestClientMatch.badge})
               </h4>
-              <p className="text-emerald-800 text-[11px] print:text-[10px] leading-relaxed">
+              <p className="text-emerald-800 text-[11px] print:text-[7px] leading-tight">
                 {sales.bestClientMatch.whyMatch}
               </p>
-              <div className="pt-1.5 border-t border-emerald-200 space-y-1">
-                <span className="font-bold text-emerald-900 block text-[11px] print:text-[10px]">Как закрывать:</span>
-                <ul className="list-disc list-inside text-emerald-800 text-[10px] print:text-[9.5px] space-y-0.5">
+              <div className="pt-1.5 print:pt-0.5 border-t border-emerald-200 space-y-1 print:space-y-0.2">
+                <span className="font-bold text-emerald-900 block text-[11px] print:text-[7px]">Как закрывать:</span>
+                <ul className="list-disc list-inside text-emerald-800 text-[10px] print:text-[6.8px] space-y-0.5 print:space-y-0 leading-tight">
                   {sales.bestClientMatch.howToSell.map((tip, idx) => (
                     <li key={idx}>{tip}</li>
                   ))}
@@ -1064,19 +1061,19 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </div>
 
             {/* Challenging Match */}
-            <div className="p-4 print:p-2.5 rounded-2xl bg-amber-50 border-2 border-amber-300 space-y-2 print:space-y-1 print-avoid-break">
-              <span className="text-[10px] uppercase font-black text-amber-800 tracking-wider bg-amber-200/60 px-2 py-0.5 rounded-full">
+            <div className="p-4 print:p-1.5 rounded-2xl bg-amber-50 border-2 border-amber-300 space-y-2 print:space-y-0.5 print-avoid-break">
+              <span className="text-[10px] print:text-[6.5px] uppercase font-black text-amber-800 tracking-wider bg-amber-200/60 px-2 py-0.5 print:px-1 print:py-0 rounded-full">
                 Сложный клиент (Требуется адаптация)
               </span>
-              <h4 className="font-black text-sm text-amber-950">
+              <h4 className="font-black text-sm print:text-[8px] text-amber-950 leading-tight">
                 {sales.challengingClientMatch.nameRu} ({sales.challengingClientMatch.badge})
               </h4>
-              <p className="text-amber-800 text-[11px] print:text-[10px] leading-relaxed">
+              <p className="text-amber-800 text-[11px] print:text-[7px] leading-tight">
                 {sales.challengingClientMatch.whyChallenge}
               </p>
-              <div className="pt-1.5 border-t border-amber-200 space-y-1">
-                <span className="font-bold text-amber-900 block text-[11px] print:text-[10px]">Рекомендованная тактика:</span>
-                <ul className="list-disc list-inside text-amber-800 text-[10px] print:text-[9.5px] space-y-0.5">
+              <div className="pt-1.5 print:pt-0.5 border-t border-amber-200 space-y-1 print:space-y-0.2">
+                <span className="font-bold text-amber-900 block text-[11px] print:text-[7px]">Рекомендованная тактика:</span>
+                <ul className="list-disc list-inside text-amber-800 text-[10px] print:text-[6.8px] space-y-0.5 print:space-y-0 leading-tight">
                   {sales.challengingClientMatch.recommendedTactics.map((tip, idx) => (
                     <li key={idx}>{tip}</li>
                   ))}
@@ -1086,36 +1083,36 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           </div>
 
           {/* Neuro-sales & ARO Audit */}
-          <div className="p-4 print:p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 print:space-y-1.5 text-xs print-avoid-break">
-            <h4 className="font-bold text-slate-900 flex items-center gap-1.5">
-              <Brain className="w-4 h-4 text-purple-600" />
+          <div className="p-4 print:p-1.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 print:space-y-0.5 text-xs print-avoid-break">
+            <h4 className="font-bold text-slate-900 flex items-center gap-1.5 text-xs print:text-[8px]">
+              <Brain className="w-4 h-4 print:w-3 print:h-3 text-purple-600" />
               Аудит навыков продаж (Нейробиология + АРО + Дожим)
             </h4>
 
-            <div className="space-y-2 print:space-y-1.5">
-              <div className="p-2.5 print:p-2 rounded-xl bg-white border border-slate-200 print-avoid-break">
-                <span className="font-bold text-slate-900 block mb-0.5 text-xs print:text-[10.5px]">
-                  🧠 Прохождение барьера «Крок-мозга» клиента (по Орену Клаффу):
+            <div className="space-y-2 print:space-y-0.5">
+              <div className="p-2.5 print:p-1 rounded-xl bg-white border border-slate-200 print-avoid-break">
+                <span className="font-bold text-slate-900 block mb-0.5 text-xs print:text-[7.5px]">
+                  🧠 Барьер «Крок-мозга» клиента (Орен Клафф):
                 </span>
-                <p className="text-slate-600 text-[11px] print:text-[9.5px] leading-relaxed">
+                <p className="text-slate-600 text-[11px] print:text-[7px] leading-tight">
                   {sales.crocBrainTactic}
                 </p>
               </div>
 
-              <div className="p-2.5 print:p-2 rounded-xl bg-white border border-slate-200 print-avoid-break">
-                <span className="font-bold text-slate-900 block mb-0.5 text-xs print:text-[10.5px]">
+              <div className="p-2.5 print:p-1 rounded-xl bg-white border border-slate-200 print-avoid-break">
+                <span className="font-bold text-slate-900 block mb-0.5 text-xs print:text-[7.5px]">
                   🤝 Треугольник доверия АРО (Аффинити, Реальность, Общение):
                 </span>
-                <p className="text-slate-600 text-[11px] print:text-[9.5px] leading-relaxed">
+                <p className="text-slate-600 text-[11px] print:text-[7px] leading-tight">
                   {sales.aroSkillDescription}
                 </p>
               </div>
 
-              <div className="p-2.5 print:p-2 rounded-xl bg-white border border-slate-200 print-avoid-break">
-                <span className="font-bold text-slate-900 block mb-0.5 text-xs print:text-[10.5px]">
-                  🎯 Органичный метод дожима и закрытия сделки:
+              <div className="p-2.5 print:p-1 rounded-xl bg-white border border-slate-200 print-avoid-break">
+                <span className="font-bold text-slate-900 block mb-0.5 text-xs print:text-[7.5px]">
+                  🎯 Органичный метод дожима:
                 </span>
-                <p className="text-slate-600 text-[11px] print:text-[9.5px] leading-relaxed">
+                <p className="text-slate-600 text-[11px] print:text-[7px] leading-tight">
                   {sales.closingMethod}
                 </p>
               </div>
@@ -1123,24 +1120,24 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           </div>
 
           {/* Print-only Executive Signatures & Seal Block */}
-          <div className="hidden print:block pt-4 mt-4 border-t-2 border-slate-900 text-xs print-avoid-break">
-            <div className="grid grid-cols-2 gap-8 text-[11px]">
-              <div className="space-y-3">
+          <div className="hidden print:block pt-2 mt-1 border-t-2 border-slate-900 text-xs print-avoid-break">
+            <div className="grid grid-cols-2 gap-6 text-[8px]">
+              <div className="space-y-1">
                 <div className="font-bold text-slate-900">С отчетом ознакомлен (Сотрудник):</div>
-                <div className="border-b border-slate-400 pt-6 flex justify-between text-[10px] text-slate-600 font-mono">
+                <div className="border-b border-slate-400 pt-3 flex justify-between text-[7.5px] text-slate-600 font-mono">
                   <span>(Подпись)</span>
                   <span>{session?.employeeName || "Сотрудник"}</span>
                 </div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-1">
                 <div className="font-bold text-slate-900">Руководитель подразделения / HRD:</div>
-                <div className="border-b border-slate-400 pt-6 flex justify-between text-[10px] text-slate-600 font-mono">
+                <div className="border-b border-slate-400 pt-3 flex justify-between text-[7.5px] text-slate-600 font-mono">
                   <span>(Подпись)</span>
                   <span>_________________</span>
                 </div>
               </div>
             </div>
-            <div className="flex justify-between items-center text-[9.5px] text-slate-500 pt-3 mt-2 border-t border-slate-200">
+            <div className="flex justify-between items-center text-[7px] text-slate-500 pt-1 mt-1 border-t border-slate-200">
               <span className="font-semibold text-slate-700">35 Health Clubs • CliftonStrengths® Extended 2.0 • Официальный Профайлинг</span>
               <span>Дата: {new Date(results.completedAt).toLocaleDateString("ru-RU")} г. • М.П.</span>
             </div>
@@ -1183,11 +1180,6 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           <RotateCcw className="w-4 h-4" />
           На главную
         </button>
-      </div>
-
-      {/* Print Footer Watermark */}
-      <div className="hidden print:block text-center text-[10px] text-slate-400 pt-6 border-t border-slate-200">
-        35 Health Clubs • CliftonStrengths® Extended 2.0 • Персональный коммерческий профиль сформирован системой автоматизированного тестирования
       </div>
     </div>
   );
