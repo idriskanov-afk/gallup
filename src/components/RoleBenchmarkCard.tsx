@@ -53,40 +53,40 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
       {/* ============================================================== */}
       {/* 1. TOP HERO: BEST ROLE RECOMMENDATION & "WHY THIS ROLE" */}
       {/* ============================================================== */}
-      <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white shadow-2xl relative overflow-hidden border border-teal-500/20">
-        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-56 h-56 rounded-full bg-teal-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
+      <div className="p-6 sm:p-7 print:p-4 rounded-3xl bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white shadow-2xl relative overflow-hidden border border-teal-500/20 print:bg-white print:text-slate-900 print:border-2 print:border-teal-700 print:shadow-none print-avoid-break">
+        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-56 h-56 rounded-full bg-teal-500/10 blur-3xl pointer-events-none print:hidden" />
+        <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none print:hidden" />
 
         <div className="relative z-10 space-y-4">
           <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-teal-500/20 text-teal-300 border border-teal-500/30">
-              <Award className="w-4 h-4 text-teal-400" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-black bg-teal-500/20 text-teal-300 border border-teal-500/30 print:bg-teal-50 print:text-teal-900 print:border-teal-300">
+              <Award className="w-4 h-4 text-teal-400 print:text-teal-700" />
               <span>Главная рекомендация по призванию в 35 Health Clubs</span>
             </div>
-            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-white/10 text-slate-200">
+            <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-white/10 text-slate-200 print:bg-slate-100 print:text-slate-700 print:border print:border-slate-300">
               {country === "uz" ? "🇺🇿 Узбекистан" : "🇰🇿 Казахстан"}
             </span>
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 print:flex-row print:items-center">
             <div className="space-y-1.5 max-w-xl">
-              <div className="text-xs uppercase font-extrabold tracking-wider text-teal-400">
+              <div className="text-xs uppercase font-extrabold tracking-wider text-teal-400 print:text-teal-800">
                 Вам больше всего подходит роль:
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-2">
+              <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white print:text-slate-900 flex items-center gap-2">
                 <span>{rec.bestMatch.benchmark.nameRu}</span>
               </h2>
-              <p className="text-sm text-teal-100 font-semibold leading-relaxed">
+              <p className="text-sm text-teal-100 print:text-slate-700 font-semibold leading-relaxed">
                 {rec.whySuitable.headline}
               </p>
             </div>
 
             {/* Score Pill */}
-            <div className="flex flex-col items-center justify-center p-4 sm:p-5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 min-w-[170px] text-center self-start md:self-center shadow-inner">
-              <div className="text-4xl sm:text-5xl font-black tracking-tight text-teal-300">
+            <div className="flex flex-col items-center justify-center p-4 sm:p-5 print:p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 min-w-[170px] print:min-w-[140px] text-center self-start md:self-center shadow-inner print:bg-teal-50 print:border-2 print:border-teal-600 print:shadow-none">
+              <div className="text-4xl sm:text-5xl print:text-3xl font-black tracking-tight text-teal-300 print:text-teal-900">
                 {rec.bestMatch.matchPercentage}%
               </div>
-              <div className="text-[11px] uppercase tracking-wider text-teal-200/80 font-bold mt-1">
+              <div className="text-[11px] uppercase tracking-wider text-teal-200/80 print:text-slate-600 font-bold mt-1">
                 Индекс совместимости
               </div>
               <div className={`mt-2 px-3 py-0.5 rounded-full text-xs font-extrabold border ${rec.bestMatch.gradeColor}`}>
@@ -96,30 +96,30 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
           </div>
 
           {/* Detailed summary */}
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-xs sm:text-sm text-slate-200 leading-relaxed font-normal">
+          <div className="p-4 print:p-3 rounded-2xl bg-white/5 border border-white/10 text-xs sm:text-sm print:text-xs text-slate-200 print:text-slate-800 leading-relaxed font-normal print:bg-slate-50 print:border-slate-300">
             {rec.whySuitable.summary}
           </div>
 
           {/* ============================================================== */}
           {/* 4 PILLARS: WHY THIS ROLE SUITS YOU BEST */}
           {/* ============================================================== */}
-          <div className="pt-2 space-y-3">
-            <h3 className="text-xs uppercase font-extrabold tracking-wider text-teal-300 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
+          <div className="pt-2 space-y-3 print:pt-1 print:space-y-2">
+            <h3 className="text-xs uppercase font-extrabold tracking-wider text-teal-300 print:text-teal-900 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 print:text-teal-700" />
               Почему именно эта должность подходит вам больше всего:
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-3 print:gap-2 text-xs">
               {/* Pillar 1: Strengths */}
-              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5">
-                <div className="font-bold text-teal-300 flex items-center gap-1.5">
-                  <Brain className="w-4 h-4 text-teal-400" />
+              <div className="p-3.5 print:p-2.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5 print:bg-white print:border-slate-300">
+                <div className="font-bold text-teal-300 print:text-slate-900 flex items-center gap-1.5">
+                  <Brain className="w-4 h-4 text-teal-400 print:text-teal-700" />
                   <span>1. Синергия сильных сторон (Gallup Топ-5)</span>
                 </div>
-                <ul className="space-y-1 text-slate-300 text-[11px] leading-relaxed">
+                <ul className="space-y-1 text-slate-300 print:text-slate-700 text-[11px] print:text-[10px] leading-relaxed">
                   {rec.whySuitable.strengthsBreakdown.map((item, idx) => (
                     <li key={idx} className="flex items-start gap-1.5">
-                      <span className="text-teal-400 font-bold">•</span>
+                      <span className="text-teal-400 print:text-teal-700 font-bold">•</span>
                       <span>{item}</span>
                     </li>
                   ))}
@@ -127,44 +127,44 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
               </div>
 
               {/* Pillar 2: Motivation */}
-              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5">
-                <div className="font-bold text-amber-300 flex items-center gap-1.5">
-                  <Coins className="w-4 h-4 text-amber-400" />
+              <div className="p-3.5 print:p-2.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5 print:bg-white print:border-slate-300">
+                <div className="font-bold text-amber-300 print:text-slate-900 flex items-center gap-1.5">
+                  <Coins className="w-4 h-4 text-amber-400 print:text-amber-600" />
                   <span>2. Мотивационный вектор</span>
                 </div>
-                <p className="text-slate-300 text-[11px] leading-relaxed">
+                <p className="text-slate-300 print:text-slate-700 text-[11px] print:text-[10px] leading-relaxed">
                   {rec.whySuitable.motivationReason}
                 </p>
               </div>
 
               {/* Pillar 3: Communication Psychotype */}
-              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5">
-                <div className="font-bold text-blue-300 flex items-center gap-1.5">
-                  <Users className="w-4 h-4 text-blue-400" />
+              <div className="p-3.5 print:p-2.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5 print:bg-white print:border-slate-300">
+                <div className="font-bold text-blue-300 print:text-slate-900 flex items-center gap-1.5">
+                  <Users className="w-4 h-4 text-blue-400 print:text-blue-600" />
                   <span>3. Коммуникативный психотип (DISC)</span>
                 </div>
-                <p className="text-slate-300 text-[11px] leading-relaxed">
+                <p className="text-slate-300 print:text-slate-700 text-[11px] print:text-[10px] leading-relaxed">
                   {rec.whySuitable.psychotypeReason}
                 </p>
               </div>
 
               {/* Pillar 4: Dominant Domain */}
-              <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5">
-                <div className="font-bold text-purple-300 flex items-center gap-1.5">
-                  <Compass className="w-4 h-4 text-purple-400" />
+              <div className="p-3.5 print:p-2.5 rounded-2xl bg-white/5 border border-white/10 space-y-1.5 print:bg-white print:border-slate-300">
+                <div className="font-bold text-purple-300 print:text-slate-900 flex items-center gap-1.5">
+                  <Compass className="w-4 h-4 text-purple-400 print:text-purple-600" />
                   <span>4. Доминирующий домен</span>
                 </div>
-                <p className="text-slate-300 text-[11px] leading-relaxed">
+                <p className="text-slate-300 print:text-slate-700 text-[11px] print:text-[10px] leading-relaxed">
                   {rec.whySuitable.domainReason}
                 </p>
               </div>
             </div>
 
             {/* Growth Advice Card */}
-            <div className="p-3.5 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-start gap-2.5 text-xs text-teal-100">
-              <Zap className="w-4 h-4 text-teal-400 flex-shrink-0 mt-0.5" />
+            <div className="p-3.5 print:p-2.5 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-start gap-2.5 text-xs text-teal-100 print:bg-teal-50 print:border-teal-300 print:text-teal-950">
+              <Zap className="w-4 h-4 text-teal-400 print:text-teal-700 flex-shrink-0 mt-0.5" />
               <div>
-                <span className="font-bold text-teal-300">Рекомендация для максимального взлета: </span>
+                <span className="font-bold text-teal-300 print:text-teal-900">Рекомендация для максимального взлета: </span>
                 <span>{rec.whySuitable.growthAdvice}</span>
               </div>
             </div>
@@ -190,14 +190,14 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
       {/* ============================================================== */}
       {/* 2. MULTI-ROLE COMPATIBILITY LEADERBOARD */}
       {/* ============================================================== */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+      <div className="p-5 sm:p-6 print:p-3 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-4 print:space-y-2 print-avoid-break">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3 print:pb-1.5">
           <div>
             <h3 className="font-extrabold text-sm sm:text-base text-slate-900 flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-teal-600" />
               <span>Рейтинг совместимости по ключевым профессиям 35 Health Clubs</span>
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 print:hidden">
               Нажмите на любую должность, чтобы изучить подробный паспорт и стандарты ниже
             </p>
           </div>
@@ -206,7 +206,7 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-3 print:gap-2">
           {rec.allMatches.map((m, index) => {
             const isSelected = selectedRoleKey === m.benchmark.roleKey;
             const isBest = index === 0;
@@ -217,10 +217,10 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
                 key={m.benchmark.roleKey}
                 onClick={() => setSelectedRoleKey(m.benchmark.roleKey)}
                 type="button"
-                className={`p-4 rounded-2xl text-left border transition flex flex-col justify-between gap-3 ${
+                className={`p-4 print:p-2.5 rounded-2xl text-left border transition flex flex-col justify-between gap-3 print:gap-1.5 ${
                   isSelected
-                    ? "border-teal-600 bg-teal-50/50 ring-2 ring-teal-200 shadow-sm"
-                    : "border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300"
+                    ? "border-teal-600 bg-teal-50/50 ring-2 ring-teal-200 shadow-sm print:bg-white print:border-teal-700 print:ring-0"
+                    : "border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 print:bg-white print:border-slate-300"
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -283,8 +283,8 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
       {/* ============================================================== */}
       {/* 3. DETAILED DOSSIER PASSPORT FOR SELECTED ROLE */}
       {/* ============================================================== */}
-      <div className="p-5 sm:p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-6">
-        <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div className="p-5 sm:p-6 print:p-4 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-6 print:space-y-4 print-avoid-break">
+        <div className="border-b border-slate-100 pb-4 print:pb-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <span className="px-2.5 py-0.5 rounded-full text-xs font-black bg-teal-100 text-teal-800">
@@ -313,7 +313,7 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
         </div>
 
         {/* Manager Verdict Banner for this role */}
-        <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-2.5 text-xs text-slate-700">
+        <div className="p-3.5 print:p-2.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-2.5 text-xs text-slate-700 print-avoid-break">
           <Sparkles className="w-4 h-4 text-teal-600 flex-shrink-0 mt-0.5" />
           <p className="leading-relaxed">
             <span className="font-bold text-slate-900">Резюме для руководства: </span>
@@ -322,7 +322,7 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
         </div>
 
         {/* Prime Talents Breakdown */}
-        <div className="space-y-3">
+        <div className="space-y-3 print:space-y-2 print-avoid-break">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <Target className="w-4 h-4 text-teal-600" />
@@ -377,9 +377,9 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
         </div>
 
         {/* Motivation and Psychotype Alignment */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-3 print:gap-2 print-avoid-break">
           {/* Motivation Alignment */}
-          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+          <div className="p-4 print:p-2.5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2 print:space-y-1">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                 <Coins className="w-4 h-4 text-amber-500" />
@@ -415,7 +415,7 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
           </div>
 
           {/* Psychotype Alignment */}
-          <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2">
+          <div className="p-4 print:p-2.5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-2 print:space-y-1">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                 <Users className="w-4 h-4 text-blue-500" />
@@ -453,7 +453,7 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
 
         {/* Special Framework: Svetlana Ivanova Profile for HR or Behavioral Model */}
         {benchmark.ivanovaProfile ? (
-          <div className="p-4 sm:p-5 rounded-2xl bg-indigo-50/50 border border-indigo-200 shadow-sm space-y-3">
+          <div className="p-4 sm:p-5 print:p-3 rounded-2xl bg-indigo-50/50 border border-indigo-200 shadow-sm space-y-3 print:space-y-1.5 print-avoid-break">
             <div className="flex items-center justify-between">
               <h3 className="text-xs sm:text-sm font-bold text-indigo-950 flex items-center gap-2">
                 <Brain className="w-4 h-4 text-indigo-600" />
@@ -464,42 +464,42 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <div className="p-2.5 rounded-xl bg-white border border-slate-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-2 print:gap-1 text-xs">
+              <div className="p-2.5 print:p-1.5 rounded-xl bg-white border border-slate-200">
                 <span className="font-bold text-slate-800 block">Тип референции:</span>
                 <span className="text-slate-600">{benchmark.ivanovaProfile.reference}</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-white border border-slate-200">
+              <div className="p-2.5 print:p-1.5 rounded-xl bg-white border border-slate-200">
                 <span className="font-bold text-slate-800 block">Стремление / Избегание:</span>
                 <span className="text-slate-600">{benchmark.ivanovaProfile.motivationVector}</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-white border border-slate-200">
+              <div className="p-2.5 print:p-1.5 rounded-xl bg-white border border-slate-200">
                 <span className="font-bold text-slate-800 block">Процесс / Результат:</span>
                 <span className="text-slate-600">{benchmark.ivanovaProfile.processResult}</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-white border border-slate-200">
+              <div className="p-2.5 print:p-1.5 rounded-xl bg-white border border-slate-200">
                 <span className="font-bold text-slate-800 block">Процедуры / Возможности:</span>
                 <span className="text-slate-600">{benchmark.ivanovaProfile.proceduresOpportunities}</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-white border border-slate-200">
+              <div className="p-2.5 print:p-1.5 rounded-xl bg-white border border-slate-200">
                 <span className="font-bold text-slate-800 block">Активность / Рефлективность:</span>
                 <span className="text-slate-600">{benchmark.ivanovaProfile.activityReflectivity}</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-white border border-slate-200">
+              <div className="p-2.5 print:p-1.5 rounded-xl bg-white border border-slate-200">
                 <span className="font-bold text-slate-800 block">Командная роль:</span>
                 <span className="text-slate-600">{benchmark.ivanovaProfile.teamRole}</span>
               </div>
             </div>
           </div>
         ) : (
-          <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm space-y-3">
+          <div className="p-4 sm:p-5 print:p-3 rounded-2xl bg-slate-50 border border-slate-200 shadow-sm space-y-3 print:space-y-1.5 print-avoid-break">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-teal-600" />
               {benchmark.behavioralModel.title}
             </h3>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-700">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-2 print:gap-1 text-xs text-slate-700">
               {benchmark.behavioralModel.items.map((item, i) => (
-                <li key={i} className="p-2.5 rounded-xl bg-white border border-slate-200 flex items-start gap-2">
+                <li key={i} className="p-2.5 print:p-1.5 rounded-xl bg-white border border-slate-200 flex items-start gap-2">
                   <span className="text-teal-600 font-bold">•</span>
                   <span>{item}</span>
                 </li>
@@ -509,7 +509,7 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
         )}
 
         {/* Red Flags & Stop Factors */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-rose-50/60 border border-rose-200 space-y-2.5">
+        <div className="p-4 sm:p-5 print:p-3 rounded-2xl bg-rose-50/60 border border-rose-200 space-y-2.5 print:space-y-1.5 print-avoid-break">
           <h3 className="text-xs sm:text-sm font-bold text-rose-950 flex items-center gap-2">
             <ShieldAlert className="w-4 h-4 text-rose-600" />
             Критические Стоп-Факторы и Красные Флаги Должности
@@ -528,23 +528,23 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
         </div>
 
         {/* Manager Checklist (Interview, Adaptation, KPI) */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-teal-50/60 border border-teal-200 space-y-3">
+        <div className="p-4 sm:p-5 print:p-3 rounded-2xl bg-teal-50/60 border border-teal-200 space-y-3 print:space-y-1.5 print-avoid-break">
           <h3 className="text-xs sm:text-sm font-bold text-teal-950 flex items-center gap-2">
             <Lightbulb className="w-4 h-4 text-teal-700" />
             Инструкция для Руководителя (Чек-лист РОПа / HRD)
           </h3>
-          <div className="space-y-2 text-xs">
-            <div className="p-2.5 rounded-xl bg-white border border-teal-150">
-              <span className="font-bold text-teal-900 block">🎯 Проверка на собеседовании:</span>
-              <span className="text-slate-600">{benchmark.managerAdvice.interviewCheck}</span>
+          <div className="space-y-2 print:space-y-1 text-xs">
+            <div className="p-2.5 print:p-1.5 rounded-xl bg-white border border-teal-100">
+              <span className="font-bold text-teal-900 block text-xs print:text-[10.5px]">🎯 Проверка на собеседовании:</span>
+              <span className="text-slate-600 print:text-[9.5px] leading-relaxed">{benchmark.managerAdvice.interviewCheck}</span>
             </div>
-            <div className="p-2.5 rounded-xl bg-white border border-teal-150">
-              <span className="font-bold text-teal-900 block">🚀 Подсказка по адаптации:</span>
-              <span className="text-slate-600">{benchmark.managerAdvice.adaptationHint}</span>
+            <div className="p-2.5 print:p-1.5 rounded-xl bg-white border border-teal-100">
+              <span className="font-bold text-teal-900 block text-xs print:text-[10.5px]">🚀 Подсказка по адаптации:</span>
+              <span className="text-slate-600 print:text-[9.5px] leading-relaxed">{benchmark.managerAdvice.adaptationHint}</span>
             </div>
-            <div className="p-2.5 rounded-xl bg-white border border-teal-150">
-              <span className="font-bold text-teal-900 block">📊 Фокусные KPI должности:</span>
-              <span className="text-slate-600">{benchmark.managerAdvice.kpiFocus}</span>
+            <div className="p-2.5 print:p-1.5 rounded-xl bg-white border border-teal-100">
+              <span className="font-bold text-teal-900 block text-xs print:text-[10.5px]">📊 Фокусные KPI должности:</span>
+              <span className="text-slate-600 print:text-[9.5px] leading-relaxed">{benchmark.managerAdvice.kpiFocus}</span>
             </div>
           </div>
         </div>

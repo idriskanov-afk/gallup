@@ -31,26 +31,52 @@ html, body {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Professional Print Styles for Gallup 34 Full Report */
+/* Professional Print Styles for Gallup 34 Executive Report */
 @media print {
-  body {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  html, body {
     background: white !important;
     color: #0f172a !important;
     user-select: auto !important;
-  }
-
-  .print-page-break {
-    page-break-before: always;
-    break-before: page;
-  }
-
-  .print-avoid-break {
-    page-break-inside: avoid;
-    break-inside: avoid;
+    font-size: 11px !important;
+    line-height: 1.35 !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   @page {
-    margin: 1.2cm;
+    margin: 10mm 10mm 12mm 10mm;
     size: A4 portrait;
+  }
+
+  /* Forced Page Breaks */
+  .print-page-break {
+    page-break-before: always !important;
+    break-before: page !important;
+  }
+
+  /* Strict Avoid Break Rules */
+  .print-avoid-break,
+  .print\:break-inside-avoid,
+  .break-inside-avoid,
+  article,
+  tr,
+  figure {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Compact text sizing and gaps for print */
+  .print-compact-p {
+    padding: 8px 12px !important;
+  }
+
+  /* Ensure background borders stay sharp */
+  .border, [class*="border-"] {
+    border-color: #cbd5e1 !important;
   }
 }

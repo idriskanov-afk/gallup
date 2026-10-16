@@ -567,109 +567,113 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </span>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 print:space-y-2">
             {results.top5.map((talent) => {
               const style = getDomainStyle(talent.domain);
               const insight = TALENT_INSIGHTS[talent.slug];
               const isExpanded = expandedTalentId === talent.id;
 
               return (
-                <div
-                  key={talent.id}
-                  className={`p-4 sm:p-5 rounded-2xl bg-white border-2 ${style.border} shadow-sm print:shadow-none print-avoid-break transition-all`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-purple-600 text-white font-black text-lg flex items-center justify-center shadow-sm">
-                        #{talent.rank}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-extrabold text-slate-900 text-base">
-                            {talent.nameRu}
-                          </h3>
-                          <span className="text-xs text-slate-400 font-normal">
-                            ({talent.nameEn})
-                          </span>
-                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${style.badge}`}>
-                            {style.label}
-                          </span>
+                <div key={talent.id} className="print-avoid-break">
+                  <div
+                    className={`p-4 sm:p-5 print:p-2.5 rounded-2xl bg-white border-2 ${style.border} shadow-sm print:shadow-none print:border-slate-300 print-avoid-break transition-all`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-3 print:gap-2">
+                        <div className="w-10 h-10 print:w-7 print:h-7 rounded-xl bg-purple-600 text-white font-black text-lg print:text-xs flex items-center justify-center shadow-sm flex-shrink-0">
+                          #{talent.rank}
                         </div>
-                        <div className="text-[11px] text-slate-500 mt-0.5">
-                          Балл: <span className="font-bold text-slate-700">{talent.score}</span> • Категоричных выборов: {talent.strongChoicesCount}
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="font-extrabold text-slate-900 text-base print:text-xs">
+                              {talent.nameRu}
+                            </h3>
+                            <span className="text-xs print:text-[10px] text-slate-400 font-normal">
+                              ({talent.nameEn})
+                            </span>
+                            <span className={`text-[10px] print:text-[9px] font-bold px-2 py-0.5 rounded-full ${style.badge}`}>
+                              {style.label}
+                            </span>
+                          </div>
+                          <div className="text-[11px] print:text-[9.5px] text-slate-500 mt-0.5">
+                            Балл: <span className="font-bold text-slate-700">{talent.score}</span> • Категоричных выборов: {talent.strongChoicesCount}
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => setExpandedTalentId(isExpanded ? null : talent.id)}
+                        className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition print:hidden"
+                      >
+                        {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      </button>
+                    </div>
+
+                    <p className="text-xs sm:text-sm print:text-[10.5px] text-slate-700 mt-3 print:mt-1 leading-relaxed">
+                      {talent.shortDescription}
+                    </p>
+
+                    <div className={`mt-4 print:mt-1.5 pt-3 print:pt-1.5 border-t border-slate-150 space-y-3 print:space-y-1.5 text-xs ${isExpanded ? "block" : "hidden print:block"}`}>
+                      {insight && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 print:grid-cols-2 gap-2.5 print:gap-1.5">
+                          <div className="p-3 print:p-1.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                            <span className="font-bold text-emerald-900 flex items-center gap-1.5 mb-0.5 text-xs print:text-[10px]">
+                              <Zap className="w-3.5 h-3.5 text-emerald-600" />
+                              В чем ваша суперсила:
+                            </span>
+                            <p className="text-emerald-800 text-[11px] print:text-[9.5px] leading-relaxed">
+                              {insight.superpower}
+                            </p>
+                          </div>
+
+                          <div className="p-3 print:p-1.5 rounded-xl bg-blue-50 border border-blue-200">
+                            <span className="font-bold text-blue-900 flex items-center gap-1.5 mb-0.5 text-xs print:text-[10px]">
+                              <Lightbulb className="w-3.5 h-3.5 text-blue-600" />
+                              Совет на каждую смену:
+                            </span>
+                            <p className="text-blue-800 text-[11px] print:text-[9.5px] leading-relaxed">
+                              {insight.actionTip}
+                            </p>
+                          </div>
+
+                          <div className="p-3 print:p-1.5 rounded-xl bg-amber-50 border border-amber-200 sm:col-span-2 print:col-span-2">
+                            <span className="font-bold text-amber-900 flex items-center gap-1.5 mb-0.5 text-xs print:text-[10px]">
+                              <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                              Ловушка таланта (Слепая зона сильной стороны):
+                            </span>
+                            <p className="text-amber-800 text-[11px] print:text-[9.5px] leading-relaxed">
+                              {insight.watchOut}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="p-3.5 print:p-2 rounded-xl bg-slate-50 border border-slate-200 space-y-2 print:space-y-1">
+                        <div className="font-bold text-slate-900 text-xs print:text-[10px] flex items-center gap-1.5">
+                          <Shield className="w-3.5 h-3.5 text-purple-600" />
+                          Инструкция для руководителя по этому таланту:
+                        </div>
+                        <div className="grid grid-cols-1 print:grid-cols-2 gap-1.5 print:gap-1 text-slate-700 text-[11px] print:text-[9px]">
+                          <div><span className="font-bold text-slate-900">📌 Задачи в смене:</span> {talent.managerGuide.tasks}</div>
+                          <div><span className="font-bold text-emerald-800">🎯 Мотивация:</span> {talent.managerGuide.motivation}</div>
+                          <div><span className="font-bold text-indigo-800">🔍 Контроль:</span> {talent.managerGuide.control}</div>
+                          <div><span className="font-bold text-rose-800">⚠️ Триггеры демотивации:</span> {talent.managerGuide.demotivationTriggers}</div>
                         </div>
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => setExpandedTalentId(isExpanded ? null : talent.id)}
-                      className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition print:hidden"
-                    >
-                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                    </button>
-                  </div>
-
-                  <p className="text-xs sm:text-sm text-slate-700 mt-3 leading-relaxed">
-                    {talent.shortDescription}
-                  </p>
-
-                  <div className={`mt-4 pt-3 border-t border-slate-150 space-y-3 text-xs ${isExpanded ? "block" : "hidden print:block"}`}>
-                    {insight && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                        <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                          <span className="font-bold text-emerald-900 flex items-center gap-1.5 mb-1">
-                            <Zap className="w-3.5 h-3.5 text-emerald-600" />
-                            В чем ваша суперсила:
-                          </span>
-                          <p className="text-emerald-800 text-[11px] leading-relaxed">
-                            {insight.superpower}
-                          </p>
-                        </div>
-
-                        <div className="p-3 rounded-xl bg-blue-50 border border-blue-200">
-                          <span className="font-bold text-blue-900 flex items-center gap-1.5 mb-1">
-                            <Lightbulb className="w-3.5 h-3.5 text-blue-600" />
-                            Совет на каждую смену:
-                          </span>
-                          <p className="text-blue-800 text-[11px] leading-relaxed">
-                            {insight.actionTip}
-                          </p>
-                        </div>
-
-                        <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 sm:col-span-2">
-                          <span className="font-bold text-amber-900 flex items-center gap-1.5 mb-1">
-                            <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
-                            Ловушка таланта (Слепая зона сильной стороны):
-                          </span>
-                          <p className="text-amber-800 text-[11px] leading-relaxed">
-                            {insight.watchOut}
-                          </p>
-                        </div>
-                      </div>
+                    {!isExpanded && (
+                      <button
+                        onClick={() => setExpandedTalentId(talent.id)}
+                        className="mt-2 text-[11px] text-purple-600 font-bold hover:underline flex items-center gap-1 print:hidden"
+                      >
+                        Показать суперсилу, ловушки и советы для смены <ChevronDown className="w-3.5 h-3.5" />
+                      </button>
                     )}
-
-                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                      <div className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
-                        <Shield className="w-3.5 h-3.5 text-purple-600" />
-                        Инструкция для руководителя по этому таланту:
-                      </div>
-                      <div className="grid grid-cols-1 gap-1.5 text-slate-700 text-[11px]">
-                        <div><span className="font-bold text-slate-900">📌 Задачи в смене:</span> {talent.managerGuide.tasks}</div>
-                        <div><span className="font-bold text-emerald-800">🎯 Мотивация:</span> {talent.managerGuide.motivation}</div>
-                        <div><span className="font-bold text-indigo-800">🔍 Контроль:</span> {talent.managerGuide.control}</div>
-                        <div><span className="font-bold text-rose-800">⚠️ Триггеры демотивации:</span> {talent.managerGuide.demotivationTriggers}</div>
-                      </div>
-                    </div>
                   </div>
-
-                  {!isExpanded && (
-                    <button
-                      onClick={() => setExpandedTalentId(talent.id)}
-                      className="mt-2 text-[11px] text-purple-600 font-bold hover:underline flex items-center gap-1 print:hidden"
-                    >
-                      Показать суперсилу, ловушки и советы для смены <ChevronDown className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  {/* Clean page breaks: 2 talents on first sheet, 3 on second sheet */}
+                  {talent.rank === 2 && <div className="hidden print:block print-page-break" />}
+                  {talent.rank === 5 && <div className="hidden print:block print-page-break" />}
                 </div>
               );
             })}
@@ -724,7 +728,8 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
               </h3>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* WEB-ONLY TABLE */}
+            <div className="overflow-x-auto print:hidden">
               <table className="w-full text-left text-xs border border-slate-200 rounded-xl overflow-hidden bg-white">
                 <thead className="bg-slate-100 text-slate-700 font-bold text-[11px] uppercase tracking-wider border-b border-slate-200">
                   <tr>
@@ -773,6 +778,65 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                   })}
                 </tbody>
               </table>
+            </div>
+
+            {/* PRINT-ONLY TWO-COLUMN TABLE (ALL 34 TALENTS FIT ON 1 PAGE) */}
+            <div className="hidden print:grid print:grid-cols-2 print:gap-2.5 text-[9.5px]">
+              {/* Column 1: #1 to #17 */}
+              <div className="border border-slate-300 rounded-lg overflow-hidden">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-slate-100 text-slate-800 font-bold border-b border-slate-300 text-[8.5px] uppercase">
+                    <tr>
+                      <th className="py-1 px-1.5 w-7 text-center">#</th>
+                      <th className="py-1 px-1.5">Талант</th>
+                      <th className="py-1 px-1.5">Домен</th>
+                      <th className="py-1 px-1.5 text-right">Балл</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {results.allRanked.slice(0, 17).map((t) => {
+                      const style = getDomainStyle(t.domain);
+                      const isTop5 = t.rank <= 5;
+                      return (
+                        <tr key={t.id} className={isTop5 ? "bg-purple-50 font-bold" : ""}>
+                          <td className="py-0.5 px-1.5 text-center font-black">#{t.rank}</td>
+                          <td className="py-0.5 px-1.5 font-semibold text-slate-900">{t.nameRu}</td>
+                          <td className="py-0.5 px-1.5 text-slate-600 text-[8.5px]">{style.label.split(" ")[0]}</td>
+                          <td className="py-0.5 px-1.5 text-right font-mono font-bold">{t.score}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Column 2: #18 to #34 */}
+              <div className="border border-slate-300 rounded-lg overflow-hidden">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-slate-100 text-slate-800 font-bold border-b border-slate-300 text-[8.5px] uppercase">
+                    <tr>
+                      <th className="py-1 px-1.5 w-7 text-center">#</th>
+                      <th className="py-1 px-1.5">Талант</th>
+                      <th className="py-1 px-1.5">Домен</th>
+                      <th className="py-1 px-1.5 text-right">Балл</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {results.allRanked.slice(17, 34).map((t) => {
+                      const style = getDomainStyle(t.domain);
+                      const isBlindSpot = t.rank >= 30;
+                      return (
+                        <tr key={t.id} className={isBlindSpot ? "bg-amber-50" : ""}>
+                          <td className="py-0.5 px-1.5 text-center font-black text-slate-700">#{t.rank}</td>
+                          <td className="py-0.5 px-1.5 font-semibold text-slate-900">{t.nameRu}</td>
+                          <td className="py-0.5 px-1.5 text-slate-600 text-[8.5px]">{style.label.split(" ")[0]}</td>
+                          <td className="py-0.5 px-1.5 text-right font-mono font-bold text-slate-700">{t.score}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
@@ -977,21 +1041,21 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           </div>
 
           {/* Client Compatibility Cards (Best Match vs Challenge) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs print-avoid-break">
             {/* Best Match */}
-            <div className="p-4 rounded-2xl bg-emerald-50 border-2 border-emerald-300 space-y-2">
+            <div className="p-4 print:p-2.5 rounded-2xl bg-emerald-50 border-2 border-emerald-300 space-y-2 print:space-y-1 print-avoid-break">
               <span className="text-[10px] uppercase font-black text-emerald-800 tracking-wider bg-emerald-200/60 px-2 py-0.5 rounded-full">
                 Идеальный клиент (Максимум конверсии)
               </span>
               <h4 className="font-black text-sm text-emerald-950">
                 {sales.bestClientMatch.nameRu} ({sales.bestClientMatch.badge})
               </h4>
-              <p className="text-emerald-800 text-[11px] leading-relaxed">
+              <p className="text-emerald-800 text-[11px] print:text-[10px] leading-relaxed">
                 {sales.bestClientMatch.whyMatch}
               </p>
               <div className="pt-1.5 border-t border-emerald-200 space-y-1">
-                <span className="font-bold text-emerald-900 block">Как закрывать:</span>
-                <ul className="list-disc list-inside text-emerald-800 text-[10px] space-y-0.5">
+                <span className="font-bold text-emerald-900 block text-[11px] print:text-[10px]">Как закрывать:</span>
+                <ul className="list-disc list-inside text-emerald-800 text-[10px] print:text-[9.5px] space-y-0.5">
                   {sales.bestClientMatch.howToSell.map((tip, idx) => (
                     <li key={idx}>{tip}</li>
                   ))}
@@ -1000,19 +1064,19 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
             </div>
 
             {/* Challenging Match */}
-            <div className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 space-y-2">
+            <div className="p-4 print:p-2.5 rounded-2xl bg-amber-50 border-2 border-amber-300 space-y-2 print:space-y-1 print-avoid-break">
               <span className="text-[10px] uppercase font-black text-amber-800 tracking-wider bg-amber-200/60 px-2 py-0.5 rounded-full">
                 Сложный клиент (Требуется адаптация)
               </span>
               <h4 className="font-black text-sm text-amber-950">
                 {sales.challengingClientMatch.nameRu} ({sales.challengingClientMatch.badge})
               </h4>
-              <p className="text-amber-800 text-[11px] leading-relaxed">
+              <p className="text-amber-800 text-[11px] print:text-[10px] leading-relaxed">
                 {sales.challengingClientMatch.whyChallenge}
               </p>
               <div className="pt-1.5 border-t border-amber-200 space-y-1">
-                <span className="font-bold text-amber-900 block">Рекомендованная тактика:</span>
-                <ul className="list-disc list-inside text-amber-800 text-[10px] space-y-0.5">
+                <span className="font-bold text-amber-900 block text-[11px] print:text-[10px]">Рекомендованная тактика:</span>
+                <ul className="list-disc list-inside text-amber-800 text-[10px] print:text-[9.5px] space-y-0.5">
                   {sales.challengingClientMatch.recommendedTactics.map((tip, idx) => (
                     <li key={idx}>{tip}</li>
                   ))}
@@ -1022,39 +1086,63 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           </div>
 
           {/* Neuro-sales & ARO Audit */}
-          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 text-xs">
+          <div className="p-4 print:p-3 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 print:space-y-1.5 text-xs print-avoid-break">
             <h4 className="font-bold text-slate-900 flex items-center gap-1.5">
               <Brain className="w-4 h-4 text-purple-600" />
               Аудит навыков продаж (Нейробиология + АРО + Дожим)
             </h4>
 
-            <div className="space-y-2">
-              <div className="p-2.5 rounded-xl bg-white border border-slate-200">
-                <span className="font-bold text-slate-900 block mb-0.5">
+            <div className="space-y-2 print:space-y-1.5">
+              <div className="p-2.5 print:p-2 rounded-xl bg-white border border-slate-200 print-avoid-break">
+                <span className="font-bold text-slate-900 block mb-0.5 text-xs print:text-[10.5px]">
                   🧠 Прохождение барьера «Крок-мозга» клиента (по Орену Клаффу):
                 </span>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
+                <p className="text-slate-600 text-[11px] print:text-[9.5px] leading-relaxed">
                   {sales.crocBrainTactic}
                 </p>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-white border border-slate-200">
-                <span className="font-bold text-slate-900 block mb-0.5">
+              <div className="p-2.5 print:p-2 rounded-xl bg-white border border-slate-200 print-avoid-break">
+                <span className="font-bold text-slate-900 block mb-0.5 text-xs print:text-[10.5px]">
                   🤝 Треугольник доверия АРО (Аффинити, Реальность, Общение):
                 </span>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
+                <p className="text-slate-600 text-[11px] print:text-[9.5px] leading-relaxed">
                   {sales.aroSkillDescription}
                 </p>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-white border border-slate-200">
-                <span className="font-bold text-slate-900 block mb-0.5">
+              <div className="p-2.5 print:p-2 rounded-xl bg-white border border-slate-200 print-avoid-break">
+                <span className="font-bold text-slate-900 block mb-0.5 text-xs print:text-[10.5px]">
                   🎯 Органичный метод дожима и закрытия сделки:
                 </span>
-                <p className="text-slate-600 text-[11px] leading-relaxed">
+                <p className="text-slate-600 text-[11px] print:text-[9.5px] leading-relaxed">
                   {sales.closingMethod}
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* Print-only Executive Signatures & Seal Block */}
+          <div className="hidden print:block pt-4 mt-4 border-t-2 border-slate-900 text-xs print-avoid-break">
+            <div className="grid grid-cols-2 gap-8 text-[11px]">
+              <div className="space-y-3">
+                <div className="font-bold text-slate-900">С отчетом ознакомлен (Сотрудник):</div>
+                <div className="border-b border-slate-400 pt-6 flex justify-between text-[10px] text-slate-600 font-mono">
+                  <span>(Подпись)</span>
+                  <span>{session?.employeeName || "Сотрудник"}</span>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="font-bold text-slate-900">Руководитель подразделения / HRD:</div>
+                <div className="border-b border-slate-400 pt-6 flex justify-between text-[10px] text-slate-600 font-mono">
+                  <span>(Подпись)</span>
+                  <span>_________________</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-between items-center text-[9.5px] text-slate-500 pt-3 mt-2 border-t border-slate-200">
+              <span className="font-semibold text-slate-700">35 Health Clubs • CliftonStrengths® Extended 2.0 • Официальный Профайлинг</span>
+              <span>Дата: {new Date(results.completedAt).toLocaleDateString("ru-RU")} г. • М.П.</span>
             </div>
           </div>
         </div>
