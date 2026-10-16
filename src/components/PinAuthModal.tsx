@@ -187,7 +187,7 @@ export function PinAuthModal({ onSuccess, defaultCountry = "kz" }: PinAuthModalP
         </div>
 
         <p className="text-[11px] text-slate-400 mt-6">
-          Код по умолчанию: <span className="font-mono font-bold text-slate-500">0035</span>
+          Закрытый доступ только для уполномоченных сотрудников HR
         </p>
       </div>
     </div>

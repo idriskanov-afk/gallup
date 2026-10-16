@@ -192,9 +192,6 @@ export default function HomePage() {
             >
               <div className="flex items-center justify-between mb-3">
                 <span className="text-3xl sm:text-4xl">🇺🇿</span>
-                <span className="text-[11px] font-bold text-teal-700 bg-teal-100/70 px-2 py-0.5 rounded-md">
-                  Ташкент
-                </span>
               </div>
               <div>
                 <h3 className="font-black text-base sm:text-lg text-slate-900 group-hover:text-teal-700 transition">
@@ -213,9 +210,6 @@ export default function HomePage() {
             >
               <div className="flex items-center justify-between mb-3">
                 <span className="text-3xl sm:text-4xl">🇰🇿</span>
-                <span className="text-[11px] font-bold text-teal-700 bg-teal-100/70 px-2 py-0.5 rounded-md">
-                  Алматы / Астана
-                </span>
               </div>
               <div>
                 <h3 className="font-black text-base sm:text-lg text-slate-900 group-hover:text-teal-700 transition">
@@ -234,7 +228,7 @@ export default function HomePage() {
               className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-600 font-medium transition"
             >
               <LayoutDashboard className="w-3.5 h-3.5" />
-              Вход для HR и Руководства клуба (PIN-код 0035)
+              Вход для HR и Руководства клуба
             </button>
           </div>
         </div>
@@ -343,7 +337,7 @@ export default function HomePage() {
             Регистрация сотрудника
           </h2>
           <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700">
-            {country === "uz" ? "🇺🇿 Ташкент" : "🇰🇿 Казахстан"}
+            {country === "uz" ? "🇺🇿 Узбекистан" : "🇰🇿 Казахстан"}
           </span>
         </div>
 
@@ -434,7 +428,7 @@ export default function HomePage() {
           className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-teal-600 font-medium transition"
         >
           <LayoutDashboard className="w-3.5 h-3.5" />
-          Вход для HR и Руководства клуба (PIN-код 0035)
+          Вход для HR и Руководства клуба
         </button>
       </div>
     </div>
