@@ -40,7 +40,7 @@ import {
 import { AssessmentResult, Domain, ScoredTalent } from "@/lib/types";
 import { PinAuthModal } from "@/components/PinAuthModal";
 import { RoleBenchmarkCard } from "@/components/RoleBenchmarkCard";
-import { calculateRoleMatch, normalizeRoleKey, CountryCode } from "@/lib/data/role-benchmarks";
+import { calculateRoleMatch, normalizeRoleKey, CountryCode, analyzeBestRoleFit } from "@/lib/data/role-benchmarks";
 
 interface SessionSummary {
   id: string;
@@ -466,6 +466,8 @@ export default function AdminDashboardPage() {
                 const roleKey = normalizeRoleKey(s.employeeRole);
                 const empCountry = (s.country === "uz" ? "uz" : "kz") as CountryCode;
                 const match = s.results ? calculateRoleMatch(s.results, roleKey, empCountry) : null;
+                const roleFit = s.results ? analyzeBestRoleFit(s.results, s.employeeRole, empCountry) : null;
+                const hasDiscrepancy = roleFit && roleFit.bestMatch.benchmark.roleKey !== roleKey && roleKey !== "custom";
 
                 return (
                   <div
@@ -489,6 +491,15 @@ export default function AdminDashboardPage() {
                         {match && (
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${match.gradeColor}`}>
                             🎯 {match.matchPercentage}% {match.gradeTitle}
+                          </span>
+                        )}
+                        {hasDiscrepancy && (
+                          <span 
+                            className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-teal-100 text-teal-900 border border-teal-300 flex items-center gap-1"
+                            title={`Природный потенциал раскрывается в другой роли: ${roleFit.bestMatch.benchmark.nameRu}`}
+                          >
+                            <span>⚡ Призвание:</span>
+                            <span className="font-black">{roleFit.bestMatch.benchmark.nameRu.split(" ")[0]} ({roleFit.bestMatch.matchPercentage}%)</span>
                           </span>
                         )}
                         {getDomainBadge(s.results?.dominantDomain)}

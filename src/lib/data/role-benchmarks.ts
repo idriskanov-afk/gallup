@@ -612,14 +612,7 @@ export const ROLE_BENCHMARKS: Record<CoreRoleKey, Record<CountryCode, RoleBenchm
   },
 };
 
-/**
- * Calculates match score (0-100%) between an employee's Gallup assessment result and an ideal job role benchmark.
- */
-export function calculateRoleMatch(
-  results: AssessmentResult,
-  roleKey: CoreRoleKey,
-  country: CountryCode = "kz"
-): {
+export interface RoleMatchResult {
   matchPercentage: number;
   grade: "ideal" | "recommended" | "conditional" | "low";
   gradeTitle: string;
@@ -631,7 +624,16 @@ export function calculateRoleMatch(
   psychotypeMatch: boolean;
   benchmark: RoleBenchmark;
   verdict: string;
-} {
+}
+
+/**
+ * Calculates match score (0-100%) between an employee's Gallup assessment result and an ideal job role benchmark.
+ */
+export function calculateRoleMatch(
+  results: AssessmentResult,
+  roleKey: CoreRoleKey,
+  country: CountryCode = "kz"
+): RoleMatchResult {
   const benchmarkGroup = ROLE_BENCHMARKS[roleKey] || ROLE_BENCHMARKS.closer;
   const benchmark = benchmarkGroup[country] || benchmarkGroup.kz;
 
@@ -760,4 +762,159 @@ export function normalizeRoleKey(roleString?: string): CoreRoleKey {
   if (r.includes("hr") || r.includes("рекрут") || r.includes("кадр") || r.includes("найм")) return "hr";
   if (r.includes("промо") || r.includes("лидоген")) return "promoter";
   return "custom";
+}
+
+export interface BestRoleRecommendation {
+  bestMatch: RoleMatchResult;
+  allMatches: RoleMatchResult[];
+  chosenRoleMatch?: RoleMatchResult;
+  whySuitable: {
+    headline: string;
+    summary: string;
+    strengthsBreakdown: string[];
+    motivationReason: string;
+    psychotypeReason: string;
+    domainReason: string;
+    growthAdvice: string;
+  };
+  discrepancyNote?: string;
+}
+
+/**
+ * Evaluates candidate against all core 35 Health Clubs roles and returns ranked matches
+ * with in-depth explanations on why the #1 role is the candidate's natural calling.
+ */
+export function analyzeBestRoleFit(
+  results: AssessmentResult,
+  chosenRoleString?: string,
+  country: CountryCode = "kz"
+): BestRoleRecommendation {
+  const candidateRoleKeys: CoreRoleKey[] = ["closer", "hunter", "trainer", "hr"];
+  const allMatches: RoleMatchResult[] = candidateRoleKeys
+    .map((rk) => calculateRoleMatch(results, rk, country))
+    .sort((a, b) => b.matchPercentage - a.matchPercentage);
+
+  const bestMatch = allMatches[0];
+  const chosenKey = normalizeRoleKey(chosenRoleString);
+  const chosenRoleMatch = chosenRoleString
+    ? calculateRoleMatch(results, chosenKey, country)
+    : undefined;
+
+  const topTalentNames = (results.top5 || []).map((t) => t.nameRu).slice(0, 3).join(", ");
+  const domName =
+    results.dominantDomain === "influencing"
+      ? "Влияние (Лидерство и Продажи)"
+      : results.dominantDomain === "executing"
+      ? "Исполнение (Дисциплина и Доведение до конца)"
+      : results.dominantDomain === "relationship"
+      ? "Построение отношений (Сервис и Доверие)"
+      : "Стратегическое мышление (Аналитика и Планирование)";
+
+  const motivName = results.motivation?.dominant?.nameRu || "Результативность";
+  const psychoName = results.psychotype?.dominant?.nameRu || "Коммуникативный";
+
+  let headline = "";
+  let summary = "";
+  let strengthsBreakdown: string[] = [];
+  let motivationReason = "";
+  let psychotypeReason = "";
+  let domainReason = "";
+  let growthAdvice = "";
+
+  switch (bestMatch.benchmark.roleKey) {
+    case "closer":
+      headline = "Природный переговорщик, снайпер закрытия сделок и дожима результата";
+      summary = `На основе комплексного аудита 34 талантов Gallup и мотивационного профиля, ваша наиболее гармоничная и сверхрезультативная роль в 35 Health Clubs — «${bestMatch.benchmark.nameRu}» (${bestMatch.matchPercentage}% совпадения). Вы обладаете врожденной смелостью называть цену, управлять ходом переговоров и дожимать сделки там, где другие сдаются.`;
+      strengthsBreakdown = [
+        `Ключевые таланты (${topTalentNames}) дают вам психологическое преимущество: вы не боитесь прямого диалога об оплате и естественно берете инициативу в свои руки.`,
+        `Врожденный драйв к достижению целей заставляет вас ежедневно отслеживать цифры личного плана и искать новые возможности для закрытия сделок.`,
+        `Вы способны доносить истинную ценность клубного абонемента выше его цены, не скатываясь в скидки и уступки.`
+      ];
+      motivationReason = `Ваш тип мотивации («${motivName}») идеально накладывается на систему премирования Клоузера: прозрачная бонусная шкала от выручки дает вам максимальный стимул выкладываться на полную мощность.`;
+      psychotypeReason = `Ваш психотип («${psychoName}») позволяет уверенно удерживать рамку диалога (правило 30/70), считывать сомнения клиента и закрывать сделку альтернативным вопросом.`;
+      domainReason = `Доминирующий домен («${domName}») обеспечивает колоссальную стрессоустойчивость к отказам — вы воспринимаете возражения не как личную обиду, а как рабочий шаг к согласию.`;
+      growthAdvice = "Внедрите жесткую дисциплину ведения CRM и WhatsApp: делайте от 3 до 5 контрольных касаний по зависшим лидам в первые 24 часа.";
+      break;
+
+    case "hunter":
+      headline = "Мастер открытия потребностей, первого контакта и вовлечения трафика";
+      summary = `Ваш психопрофиль максимально раскрывается в роли «${bestMatch.benchmark.nameRu}» (${bestMatch.matchPercentage}% совпадения). Вы обладаете редким талантом вызывать доверие с первых 15 секунд диалога, мастерски задавать открытые вопросы и вовлекать новых людей в клубное сообщество 35 Health Clubs.`;
+      strengthsBreakdown = [
+        `Ваши ведущие таланты (${topTalentNames}) позволяют быстро сонастраиваться с абсолютно любым человеком, снимая барьеры настороженности и недоверия.`,
+        `Вы не продаете «в лоб», а мастерски выявляете истинные глубинные боли клиента (усталость, боли в спине, нехватка тонуса) и создаете мощную ценность первого визита.`,
+        `Высокая скорость реакции и контактность обеспечивают идеальную отработку входящего потока без потери лидов.`
+      ];
+      motivationReason = `Ваш мотивационный профиль («${motivName}») черпает энергию от постоянного притока новых людей, динамики общения и чувства первой победы при назначении встречи.`;
+      psychotypeReason = `Стиль коммуникации («${psychoName}») формирует безопасную доверительную среду, где клиент с удовольствием раскрывает свои реальные фитнес-цели.`;
+      domainReason = `Доминирующий домен («${domName}») помогает поддерживать высокий темп коммуникаций без эмоционального спада на протяжении всего рабочего дня.`;
+      growthAdvice = "Категорически избегайте ценового демпинга и ложной спешки при первом контакте. Продавайте следующий шаг (визит в клуб на диагностику), а не контракт в трубку.";
+      break;
+
+    case "trainer":
+      headline = "Проводник к здоровью, сервисный лидер и эксперт заботы о теле";
+      summary = `Ваше истинное призвание — «${bestMatch.benchmark.nameRu}» (${bestMatch.matchPercentage}% совпадения). Ваш психологический рисунок основан на искреннем желании помогать людям, бережном отношении к телу и принципах клуба: «Просто. Безопасно. Эффективно».`;
+      strengthsBreakdown = [
+        `Таланты (${topTalentNames}) дают вам глубокое сопереживание и терпение в работе с клиентами любого уровня подготовки и возраста.`,
+        `Вы никогда не используете чувство стыда или вины за лишний вес — ваш подход базируется на уважении, позитивном подкреплении и физиологической безопасности.`,
+        `Способность доступно объяснять биомеханику и профилактику саркопении делает каждую тренировку понятной и комфортной для резидента.`
+      ];
+      motivationReason = `Ваша мотивация («${motivName}») раскрывается через благодарность клиентов, их избавление от болей в спине и видимый физический прогресс от тренировок.`;
+      psychotypeReason = `Стиль («${psychoName}») мгновенно деэскалирует напряжение и создает атмосферу абсолютного психологического комфорта в тренажерном зале.`;
+      domainReason = `Доминирующий домен («${domName}») обеспечивает надежность, пунктуальность и высочайший уровень сервисной культуры.`;
+      growthAdvice = "При возникновении любых претензий используйте фирменный протокол 35 Health Clubs: Внимательно выслушать ➔ Признать чувства ➔ Предложить решение без спора.";
+      break;
+
+    case "hr":
+      headline = "Архитектор сильной команды, эксперт оценки и управления воронкой найма";
+      summary = `Ваш потенциал на 100% соответствует роли «${bestMatch.benchmark.nameRu}» (${bestMatch.matchPercentage}% совпадения). Вы обладаете развитым чутьем на потенциал людей, системным мышлением и моделью поведения Светланы Ивановой: внутренняя референция, ориентация на результат выходов и постоянный поиск новых возможностей.`;
+      strengthsBreakdown = [
+        `Ключевые таланты (${topTalentNames}) позволяют сканировать истинную мотивацию кандидатов и видеть за резюме реальный рабочий потенциал.`,
+        `Вы не останавливаетесь на формальных отчетах («я сделала 100 звонков»), а держите фокус на ключевом показателе — фактическом выходе сильных сотрудников на стажировку.`,
+        `Инициативность и скорость: при снижении доходимости вы самостоятельно тестируете новые каналы и скрипты привлечения.`
+      ];
+      motivationReason = `Ваш тип («${motivName}») подпитывается масштабом влияния: каждый нанятый вами сильный тренер или клоузер делает компанию сильнее и успешнее.`;
+      psychotypeReason = `Стиль («${psychoName}») обеспечивает баланс дружелюбия и твердости: вы располагаете соискателя, но глубоко калибруете его на стрессоустойчивость и ценности.`;
+      domainReason = `Доминирующий домен («${domName}») гарантирует аналитическую строгость и системный порядок в воронке кандидатов.`;
+      growthAdvice = "Управляйте не только воронкой найма, но и первыми 14 днями адаптации сотрудников, минимизируя раннюю текучесть кадров.";
+      break;
+
+    default:
+      headline = `Оптимальная роль: ${bestMatch.benchmark.nameRu}`;
+      summary = `Ваши сильные стороны максимально эффективно раскрываются на позиции «${bestMatch.benchmark.nameRu}» (${bestMatch.matchPercentage}% совместимости).`;
+      strengthsBreakdown = [
+        `Ваши таланты (${topTalentNames}) создают сильный рабочий фундамент для этой профессии.`
+      ];
+      motivationReason = `Тип мотивации («${motivName}») обеспечивает устойчивый интерес к задачам роли.`;
+      psychotypeReason = `Психотип («${psychoName}») помогает гармонично взаимодействовать с коллегами и клиентами.`;
+      domainReason = `Домен («${domName}») гарантирует надежность выполнения функциональных обязанностей.`;
+      growthAdvice = "Развивайте сильные стороны и опирайтесь на синергию с коллегами в менее развитых зонах.";
+      break;
+  }
+
+  let discrepancyNote: string | undefined = undefined;
+  if (chosenRoleString && chosenKey !== "custom" && chosenKey !== bestMatch.benchmark.roleKey) {
+    const chosenPercent = chosenRoleMatch?.matchPercentage || 0;
+    const bestPercent = bestMatch.matchPercentage;
+    const diff = bestPercent - chosenPercent;
+
+    if (diff >= 5) {
+      discrepancyNote = `Вы указали роль «${chosenRoleMatch?.benchmark.nameRu || chosenRoleString}» (совместимость ${chosenPercent}%), однако ваш природный психологический профиль показал наивысший потенциал для роли «${bestMatch.benchmark.nameRu}» (${bestPercent}%). В этой роли вы раскроетесь гораздо легче и достигнете более высоких результатов без эмоционального выгорания!`;
+    }
+  }
+
+  return {
+    bestMatch,
+    allMatches,
+    chosenRoleMatch,
+    whySuitable: {
+      headline,
+      summary,
+      strengthsBreakdown,
+      motivationReason,
+      psychotypeReason,
+      domainReason,
+      growthAdvice,
+    },
+    discrepancyNote,
+  };
 }
