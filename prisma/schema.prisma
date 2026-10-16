@@ -35,7 +35,8 @@ model Question {
 model TestSession {
   id                   String     @id @default(uuid())
   employeeName         String
-  employeeRole         String     // e.g. Промоутер, Ассистент, Оператор КЦ, Менеджер
+  employeeRole         String     // e.g. Клоузер, Хантер, Тренер, HR, Промоутер
+  country              String     @default("kz") // uz | kz
   status               String     @default("in_progress") // in_progress | completed
   currentQuestionIndex Int        @default(0)
   startedAt            DateTime   @default(now())

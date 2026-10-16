@@ -32,14 +32,21 @@ import {
   Printer,
   Sparkles,
   Download,
-  Upload
+  Upload,
+  Lock,
+  LogOut,
+  Globe2
 } from "lucide-react";
 import { AssessmentResult, Domain, ScoredTalent } from "@/lib/types";
+import { PinAuthModal } from "@/components/PinAuthModal";
+import { RoleBenchmarkCard } from "@/components/RoleBenchmarkCard";
+import { calculateRoleMatch, normalizeRoleKey, CountryCode } from "@/lib/data/role-benchmarks";
 
 interface SessionSummary {
   id: string;
   employeeName: string;
   employeeRole: string;
+  country?: "uz" | "kz";
   status: string;
   currentQuestionIndex: number;
   startedAt: string;
@@ -49,6 +56,10 @@ interface SessionSummary {
 
 export default function AdminDashboardPage() {
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [countryFilter, setCountryFilter] = useState<"all" | "uz" | "kz">("all");
+
   const [sessions, setSessions] = useState<SessionSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,8 +73,30 @@ export default function AdminDashboardPage() {
 
   // Selected employee for detailed dossier modal
   const [selectedSession, setSelectedSession] = useState<SessionSummary | null>(null);
-  const [modalTab, setModalTab] = useState<"summary" | "talents34" | "motivation" | "psychotype" | "sales">("summary");
+  const [modalTab, setModalTab] = useState<"summary" | "benchmark" | "talents34" | "motivation" | "psychotype" | "sales">("summary");
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const auth = sessionStorage.getItem("35_admin_authenticated");
+      if (auth === "true") {
+        setIsAuthenticated(true);
+        const savedCountry = sessionStorage.getItem("35_admin_country") as "uz" | "kz" | null;
+        if (savedCountry === "uz" || savedCountry === "kz") {
+          setCountryFilter(savedCountry);
+        }
+      }
+      setCheckingAuth(false);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("35_admin_authenticated");
+      sessionStorage.removeItem("35_admin_country");
+    }
+    setIsAuthenticated(false);
+  };
 
   const copyEmployeeLink = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -143,13 +176,16 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [roleFilter, domainFilter, motivationFilter, psychotypeFilter]);
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [countryFilter, roleFilter, domainFilter, motivationFilter, psychotypeFilter, isAuthenticated]);
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
+      if (countryFilter !== "all") params.append("country", countryFilter);
       if (roleFilter !== "all") params.append("role", roleFilter);
       if (domainFilter !== "all") params.append("domain", domainFilter);
       if (motivationFilter !== "all") params.append("motivation", motivationFilter);
@@ -186,6 +222,26 @@ export default function AdminDashboardPage() {
     }
   };
 
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="w-8 h-8 border-4 border-teal-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <PinAuthModal
+        defaultCountry={countryFilter === "uz" ? "uz" : "kz"}
+        onSuccess={(selectedCountry) => {
+          setIsAuthenticated(true);
+          setCountryFilter(selectedCountry);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-5xl mx-auto pb-16">
       {/* Top Header */}
@@ -202,12 +258,40 @@ export default function AdminDashboardPage() {
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
-              Комплексный коммерческий аудит сотрудников: Gallup 34, Мотивационная типология, Психотипы DISC и Матрица продаж
+              Комплексный аудит сотрудников: 35 Match™ эталон должности, Gallup 34, Мотивация и Психотипы
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Country Filter Switcher */}
+          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl text-xs font-bold text-slate-700">
+            <button
+              onClick={() => setCountryFilter("all")}
+              className={`px-2.5 py-1.5 rounded-lg transition ${
+                countryFilter === "all" ? "bg-white text-teal-800 shadow-xs" : "hover:text-slate-900"
+              }`}
+            >
+              Все страны
+            </button>
+            <button
+              onClick={() => setCountryFilter("uz")}
+              className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition ${
+                countryFilter === "uz" ? "bg-white text-teal-800 shadow-xs" : "hover:text-slate-900"
+              }`}
+            >
+              <span>🇺🇿</span> Уз
+            </button>
+            <button
+              onClick={() => setCountryFilter("kz")}
+              className={`px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition ${
+                countryFilter === "kz" ? "bg-white text-teal-800 shadow-xs" : "hover:text-slate-900"
+              }`}
+            >
+              <span>🇰🇿</span> Кз
+            </button>
+          </div>
+
           <button
             onClick={handleExportBackup}
             disabled={exporting}
@@ -215,7 +299,7 @@ export default function AdminDashboardPage() {
             className="px-3 py-2 text-xs font-semibold rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 flex items-center gap-1.5 transition disabled:opacity-50 shadow-sm"
           >
             <Download className="w-3.5 h-3.5" />
-            {exporting ? "Выгрузка..." : "Бэкап (JSON)"}
+            {exporting ? "Выгрузка..." : "Бэкап"}
           </button>
 
           <label
@@ -236,11 +320,20 @@ export default function AdminDashboardPage() {
           </label>
 
           <button
+            onClick={handleLogout}
+            title="Заблокировать дашборд PIN-кодом"
+            className="px-3 py-2 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-700 flex items-center gap-1 transition"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            Выйти
+          </button>
+
+          <button
             onClick={() => router.push("/")}
             className="px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 transition"
           >
             <Home className="w-3.5 h-3.5" />
-            На главную
+            На сайт
           </button>
         </div>
       </div>
@@ -369,36 +462,49 @@ export default function AdminDashboardPage() {
             </div>
           ) : (
             <div className="space-y-2.5">
-              {filteredSessions.map((s) => (
-                <div
-                  key={s.id}
-                  onClick={() => s.results && setSelectedSession(s)}
-                  className={`p-4 rounded-2xl border bg-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition cursor-pointer hover:border-teal-300 hover:shadow-md ${
-                    selectedSession?.id === s.id ? "border-teal-500 ring-2 ring-teal-100" : "border-slate-200"
-                  }`}
-                >
-                  <div className="space-y-1.5 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-extrabold text-sm text-slate-900">
-                        {s.employeeName}
-                      </h3>
-                      <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
-                        {s.employeeRole}
-                      </span>
-                      {getDomainBadge(s.results?.dominantDomain)}
+              {filteredSessions.map((s) => {
+                const roleKey = normalizeRoleKey(s.employeeRole);
+                const empCountry = (s.country === "uz" ? "uz" : "kz") as CountryCode;
+                const match = s.results ? calculateRoleMatch(s.results, roleKey, empCountry) : null;
 
-                      {s.results?.motivation && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
-                          {s.results.motivation.dominant.badge}
+                return (
+                  <div
+                    key={s.id}
+                    onClick={() => s.results && setSelectedSession(s)}
+                    className={`p-4 rounded-2xl border bg-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition cursor-pointer hover:border-teal-300 hover:shadow-md ${
+                      selectedSession?.id === s.id ? "border-teal-500 ring-2 ring-teal-100" : "border-slate-200"
+                    }`}
+                  >
+                    <div className="space-y-1.5 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700">
+                          {s.country === "uz" ? "🇺🇿 Уз" : "🇰🇿 Кз"}
                         </span>
-                      )}
+                        <h3 className="font-extrabold text-sm text-slate-900">
+                          {s.employeeName}
+                        </h3>
+                        <span className="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">
+                          {s.employeeRole}
+                        </span>
+                        {match && (
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${match.gradeColor}`}>
+                            🎯 {match.matchPercentage}% {match.gradeTitle}
+                          </span>
+                        )}
+                        {getDomainBadge(s.results?.dominantDomain)}
 
-                      {s.results?.psychotype && (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
-                          {s.results.psychotype.dominant.badge}
-                        </span>
-                      )}
-                    </div>
+                        {s.results?.motivation && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                            {s.results.motivation.dominant.badge}
+                          </span>
+                        )}
+
+                        {s.results?.psychotype && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">
+                            {s.results.psychotype.dominant.badge}
+                          </span>
+                        )}
+                      </div>
 
                     {s.results ? (
                       <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-600">
@@ -460,8 +566,9 @@ export default function AdminDashboardPage() {
                     )}
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
+          </div>
           )}
         </div>
       )}
@@ -677,6 +784,18 @@ export default function AdminDashboardPage() {
               </button>
 
               <button
+                onClick={() => setModalTab("benchmark")}
+                className={`py-2 px-3 rounded-xl transition whitespace-nowrap flex items-center gap-1.5 ${
+                  modalTab === "benchmark"
+                    ? "bg-slate-900 text-teal-300 shadow-sm"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
+                <Target className="w-3.5 h-3.5 text-teal-500" />
+                <span>35 Match™ (Эталон Должности)</span>
+              </button>
+
+              <button
                 onClick={() => setModalTab("talents34")}
                 className={`py-2 px-3 rounded-xl transition whitespace-nowrap flex items-center gap-1 ${
                   modalTab === "talents34"
@@ -724,6 +843,15 @@ export default function AdminDashboardPage() {
                 Продажи & Клиенты
               </button>
             </div>
+
+            {/* TAB CONTENT: BENCHMARK ROLE MATCH */}
+            {modalTab === "benchmark" && selectedSession.results && (
+              <RoleBenchmarkCard
+                results={selectedSession.results}
+                roleName={selectedSession.employeeRole}
+                country={(selectedSession.country === "uz" ? "uz" : "kz") as "uz" | "kz"}
+              />
+            )}
 
             {/* TAB CONTENT: 1. SUMMARY */}
             {modalTab === "summary" && (

@@ -12,23 +12,25 @@ import {
   ChevronRight, 
   ShieldCheck, 
   LayoutDashboard,
-  PlayCircle
+  PlayCircle,
+  Globe2,
+  RotateCcw
 } from "lucide-react";
 
-const ROLE_OPTIONS = [
-  "Менеджер отдела продаж",
-  "Администратор рецепции",
-  "Фитнес-тренер / Инструктор",
-  "Сервис-менеджер / Клиентский отдел",
-  "Управляющий клубом",
-  "Специалист колл-центра",
+const CORE_ROLES = [
+  "Клоузер (Менеджер закрытия сделок)",
+  "Хантер (Привлечение & Первичный контакт)",
+  "Тренер 35’ Health Clubs",
+  "HR-Рекрутер (Массовый подбор)",
+  "Промоутер",
   "Другая должность",
 ];
 
 export default function HomePage() {
   const router = useRouter();
+  const [country, setCountry] = useState<"uz" | "kz" | null>(null);
   const [name, setName] = useState("");
-  const [role, setRole] = useState(ROLE_OPTIONS[0]);
+  const [role, setRole] = useState(CORE_ROLES[0]);
   const [customRole, setCustomRole] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,16 +38,23 @@ export default function HomePage() {
     id: string;
     employeeName: string;
     employeeRole: string;
+    country?: string;
     currentQuestionIndex: number;
   } | null>(null);
 
-  // Initialize Telegram WebApp if present
+  // Initialize Telegram WebApp and check existing session / country
   useEffect(() => {
     if (typeof window !== "undefined") {
       const tg = (window as any).Telegram?.WebApp;
       if (tg) {
         tg.ready?.();
         tg.expand?.();
+      }
+
+      // Restore country preference if chosen before
+      const savedCountry = localStorage.getItem("35_selected_country") as "uz" | "kz" | null;
+      if (savedCountry === "uz" || savedCountry === "kz") {
+        setCountry(savedCountry);
       }
 
       // Check localStorage for in-progress session
@@ -62,8 +71,12 @@ export default function HomePage() {
                     id: data.session.id,
                     employeeName: data.session.employeeName,
                     employeeRole: data.session.employeeRole,
+                    country: data.session.country,
                     currentQuestionIndex: data.session.currentQuestionIndex,
                   });
+                  if (data.session.country) {
+                    setCountry(data.session.country as "uz" | "kz");
+                  }
                 } else if (data.session?.status === "completed") {
                   localStorage.removeItem("gallup_active_session");
                 }
@@ -75,10 +88,21 @@ export default function HomePage() {
     }
   }, []);
 
+  const handleSelectCountry = (chosen: "uz" | "kz") => {
+    setCountry(chosen);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("35_selected_country", chosen);
+    }
+  };
+
   const handleStart = async (e: React.FormEvent) => {
     e.preventDefault();
     const finalRole = role === "Другая должность" ? customRole.trim() : role;
 
+    if (!country) {
+      setError("Пожалуйста, выберите страну");
+      return;
+    }
     if (!name.trim()) {
       setError("Пожалуйста, введите ваше имя или ФИО");
       return;
@@ -98,6 +122,7 @@ export default function HomePage() {
         body: JSON.stringify({
           employeeName: name.trim(),
           employeeRole: finalRole,
+          country,
         }),
       });
 
@@ -112,6 +137,7 @@ export default function HomePage() {
           id: data.sessionId,
           employeeName: data.employeeName,
           employeeRole: data.employeeRole,
+          country: data.country || country,
         })
       );
 
@@ -128,6 +154,97 @@ export default function HomePage() {
     }
   };
 
+  // ==========================================
+  // FIRST SPLASH SCREEN: CHOOSE COUNTRY
+  // ==========================================
+  if (!country) {
+    return (
+      <div className="min-h-[85vh] flex items-center justify-center p-4 sm:p-6 max-w-lg mx-auto">
+        <div className="w-full bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 shadow-xl text-center space-y-6 animate-fadeIn">
+          {/* Logo */}
+          <div className="flex justify-center">
+            <img 
+              src="/logo.png" 
+              alt="35 Health Clubs" 
+              className="h-20 sm:h-24 object-contain filter drop-shadow-sm transition hover:scale-105"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold tracking-wide uppercase">
+              <Globe2 className="w-3.5 h-3.5 text-teal-600" />
+              Локация тестирования
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Выберите страну
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto">
+              Тестирование адаптировано под стандарты работы и профили должностей фитнес-клубов 35 Health Clubs
+            </p>
+          </div>
+
+          {/* Country Selection 2 Big Buttons */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+            <button
+              type="button"
+              onClick={() => handleSelectCountry("uz")}
+              className="group p-5 rounded-2xl border-2 border-slate-200 hover:border-teal-500 bg-slate-50/70 hover:bg-teal-50/40 text-left transition-all duration-200 active:scale-[0.98] shadow-sm flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-3xl sm:text-4xl">🇺🇿</span>
+                <span className="text-[11px] font-bold text-teal-700 bg-teal-100/70 px-2 py-0.5 rounded-md">
+                  Ташкент
+                </span>
+              </div>
+              <div>
+                <h3 className="font-black text-base sm:text-lg text-slate-900 group-hover:text-teal-700 transition">
+                  Узбекистан
+                </h3>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  35 Health Clubs Uzbekistan
+                </p>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleSelectCountry("kz")}
+              className="group p-5 rounded-2xl border-2 border-slate-200 hover:border-teal-500 bg-slate-50/70 hover:bg-teal-50/40 text-left transition-all duration-200 active:scale-[0.98] shadow-sm flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-3xl sm:text-4xl">🇰🇿</span>
+                <span className="text-[11px] font-bold text-teal-700 bg-teal-100/70 px-2 py-0.5 rounded-md">
+                  Алматы / Астана
+                </span>
+              </div>
+              <div>
+                <h3 className="font-black text-base sm:text-lg text-slate-900 group-hover:text-teal-700 transition">
+                  Казахстан
+                </h3>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  35 Health Clubs Kazakhstan
+                </p>
+              </div>
+            </button>
+          </div>
+
+          <div className="pt-4 border-t border-slate-100">
+            <button
+              onClick={() => router.push("/admin")}
+              className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-600 font-medium transition"
+            >
+              <LayoutDashboard className="w-3.5 h-3.5" />
+              Вход для HR и Руководства клуба (PIN-код 0035)
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // REGISTRATION & TEST ONBOARDING FORM
+  // ==========================================
   return (
     <div className="p-4 sm:p-6 md:p-8 space-y-6 max-w-xl mx-auto">
       {/* 35 Health Clubs Brand Header */}
@@ -139,15 +256,29 @@ export default function HomePage() {
             className="h-20 sm:h-24 object-contain filter drop-shadow-sm transition hover:scale-105"
           />
         </div>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold tracking-wide uppercase">
-          <Sparkles className="w-3.5 h-3.5 text-teal-600" />
-          35 HEALTH CLUBS • CliftonStrengths® 2.0
+
+        {/* Selected Country Indicator with Switch Button */}
+        <div className="flex items-center justify-center gap-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold tracking-wide">
+            <span>{country === "uz" ? "🇺🇿 Узбекистан" : "🇰🇿 Казахстан"}</span>
+            <span className="text-teal-500">•</span>
+            <span>CliftonStrengths® 2.0</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setCountry(null)}
+            title="Сменить страну"
+            className="p-1 rounded-full text-slate-400 hover:text-teal-700 hover:bg-slate-100 transition"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+          </button>
         </div>
+
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900">
           Оценка талантов команды клуба
         </h1>
         <p className="text-sm text-slate-600 max-w-md mx-auto">
-          Узнайте ваши сильнейшие стороны из 34 талантов, стиль мотивации и клиентской совместимости для рекордных результатов
+          Узнайте ваши сильнейшие стороны из 34 талантов, стиль мотивации и соответствие эталону должности
         </p>
       </div>
 
@@ -206,10 +337,15 @@ export default function HomePage() {
 
       {/* Main Start Form */}
       <form onSubmit={handleStart} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">
-        <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
-          <ShieldCheck className="w-5 h-5 text-teal-600" />
-          Начать новое тестирование
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-teal-600" />
+            Регистрация сотрудника
+          </h2>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700">
+            {country === "uz" ? "🇺🇿 Ташкент" : "🇰🇿 Казахстан"}
+          </span>
+        </div>
 
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl">
@@ -240,7 +376,7 @@ export default function HomePage() {
             onChange={(e) => setRole(e.target.value)}
             className="w-full px-3.5 py-2.5 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
           >
-            {ROLE_OPTIONS.map((opt) => (
+            {CORE_ROLES.map((opt) => (
               <option key={opt} value={opt}>
                 {opt}
               </option>
@@ -298,7 +434,7 @@ export default function HomePage() {
           className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-teal-600 font-medium transition"
         >
           <LayoutDashboard className="w-3.5 h-3.5" />
-          Вход для HR и Руководства клуба (Дашборд и Матрица команды)
+          Вход для HR и Руководства клуба (PIN-код 0035)
         </button>
       </div>
     </div>

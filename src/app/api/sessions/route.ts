@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { employeeName, employeeRole } = body;
+    const { employeeName, employeeRole, country } = body;
 
     if (!employeeName || !employeeRole) {
       return NextResponse.json(
@@ -17,6 +17,7 @@ export async function POST(req: Request) {
       data: {
         employeeName: employeeName.trim(),
         employeeRole: employeeRole.trim(),
+        country: country === "uz" ? "uz" : "kz",
         status: "in_progress",
         currentQuestionIndex: 0,
       },
@@ -26,6 +27,7 @@ export async function POST(req: Request) {
       sessionId: session.id,
       employeeName: session.employeeName,
       employeeRole: session.employeeRole,
+      country: session.country,
       currentQuestionIndex: session.currentQuestionIndex,
       status: session.status,
     });

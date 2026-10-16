@@ -40,6 +40,7 @@ import {
 import { AssessmentResult, Domain, ScoredTalent } from "@/lib/types";
 import { TALENT_INSIGHTS } from "@/lib/data/talent-insights";
 import { MOTIVATION_TYPES, PSYCHOTYPES, CLIENT_COLORS } from "@/lib/data/sales-frameworks";
+import { RoleBenchmarkCard } from "@/components/RoleBenchmarkCard";
 
 export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
@@ -50,7 +51,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
   const [session, setSession] = useState<any>(null);
   const [results, setResults] = useState<AssessmentResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"talents" | "motivation" | "psychotype" | "sales">("talents");
+  const [activeTab, setActiveTab] = useState<"talents" | "benchmark" | "motivation" | "psychotype" | "sales">("talents");
   const [expandedTalentId, setExpandedTalentId] = useState<number | null>(null);
   const [showAll34, setShowAll34] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -367,6 +368,18 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
         </button>
 
         <button
+          onClick={() => setActiveTab("benchmark")}
+          className={`py-2 px-3.5 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap ${
+            activeTab === "benchmark"
+              ? "bg-purple-600 text-white shadow-sm"
+              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          }`}
+        >
+          <Target className="w-4 h-4" />
+          🎯 35 Match™ (Эталон Должности)
+        </button>
+
+        <button
           onClick={() => setActiveTab("motivation")}
           className={`py-2 px-3.5 rounded-xl transition flex items-center gap-1.5 whitespace-nowrap ${
             activeTab === "motivation"
@@ -401,6 +414,17 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
           <Palette className="w-4 h-4" />
           Продажи & Клиенты
         </button>
+      </div>
+
+      {/* ============================================================== */}
+      {/* SECTION: 35 MATCH BENCHMARK (Visible on Tab or Print) */}
+      {/* ============================================================== */}
+      <div className={`space-y-6 ${activeTab === "benchmark" ? "block" : "hidden print:block"}`}>
+        <RoleBenchmarkCard
+          results={results}
+          roleName={session?.employeeRole || "Сотрудник"}
+          country={session?.country || "kz"}
+        />
       </div>
 
       {/* ============================================================== */}

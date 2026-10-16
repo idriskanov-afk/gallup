@@ -9,6 +9,7 @@ export async function GET(req: Request) {
     const domainFilter = searchParams.get("domain");
     const motivationFilter = searchParams.get("motivation");
     const psychotypeFilter = searchParams.get("psychotype");
+    const countryFilter = searchParams.get("country");
 
     const sessions = await prisma.testSession.findMany({
       orderBy: { completedAt: "desc" },
@@ -27,6 +28,7 @@ export async function GET(req: Request) {
         id: s.id,
         employeeName: s.employeeName,
         employeeRole: s.employeeRole,
+        country: (s as any).country || "kz",
         status: s.status,
         currentQuestionIndex: s.currentQuestionIndex,
         startedAt: s.startedAt,
@@ -37,6 +39,9 @@ export async function GET(req: Request) {
 
     // Filtering
     let filtered = parsedSessions;
+    if (countryFilter && countryFilter !== "all") {
+      filtered = filtered.filter((s) => s.country === countryFilter);
+    }
     if (roleFilter && roleFilter !== "all") {
       filtered = filtered.filter((s) => s.employeeRole === roleFilter);
     }
