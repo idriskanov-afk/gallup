@@ -251,11 +251,11 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
                     className={`h-full rounded-full transition-all duration-500 ${
                       m.matchPercentage >= 85
                         ? "bg-emerald-500"
-                        : m.matchPercentage >= 70
+                        : m.matchPercentage >= 72
                         ? "bg-teal-500"
-                        : m.matchPercentage >= 55
+                        : m.matchPercentage >= 60
                         ? "bg-amber-500"
-                        : "bg-rose-500"
+                        : "bg-slate-400"
                     }`}
                     style={{ width: `${m.matchPercentage}%` }}
                   />
