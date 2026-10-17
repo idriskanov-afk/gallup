@@ -56,12 +56,17 @@ export const ROLE_BENCHMARKS: Record<CoreRoleKey, Record<CountryCode, RoleBenchm
         { domain: "relationship", importance: "medium" },
       ],
       primeTalents: [
-        { id: 1, nameRu: "Достижение (Achiever)", reason: "Голод к результату, сам считает сколько не хватает до плана" },
-        { id: 13, nameRu: "Конкуренция (Competition)", reason: "Стремление быть лидером в продажах и побеждать в контестах" },
-        { id: 11, nameRu: "Распорядитель (Command)", reason: "Смелость закрывать сделку, не боится прямо озвучивать оплату" },
-        { id: 10, nameRu: "Катализатор (Activator)", reason: "Быстрый переход к действию, шустрость в обработке лидов" },
-        { id: 12, nameRu: "Общительность (Communication)", reason: "Живой язык, эмоциональная продажа через ценность" },
-        { id: 2, nameRu: "Организатор (Arranger)", reason: "Ведение CRM, многоканальные дожимы через WhatsApp" },
+        { id: 11, nameRu: "Распорядитель (Command)", reason: "Смелость закрывать сделку, прямо называть цену и вести переговоры" },
+        { id: 13, nameRu: "Конкуренция (Competition)", reason: "Азарт быть лидером в продажах и побеждать в рейтингах" },
+        { id: 15, nameRu: "Уверенность (Self-Assurance)", reason: "Внутренний стержень и невозмутимость при отказах и возражениях" },
+        { id: 1, nameRu: "Достижение (Achiever)", reason: "Голод к результату, фокус на выполнении дневного плана" },
+        { id: 10, nameRu: "Катализатор (Activator)", reason: "Быстрый переход к действию, высокая скорость дожима" },
+        { id: 7, nameRu: "Фокус (Focus)", reason: "Удержание внимания на главной цели — оплате и закрытии сделки" },
+      ],
+      disfavoredTalents: [
+        { id: 22, nameRu: "Гармония (Harmony)", reason: "Избегание острых углов мешает отрабатывать жесткие возражения" },
+        { id: 21, nameRu: "Эмпатия (Empathy)", reason: "Излишняя мягкость мешает уверенно называть цену и дожимать" },
+        { id: 5, nameRu: "Осмотрительность (Deliberative)", reason: "Долгие раздумья снижают темп закрытия сделок" },
       ],
       targetMotivation: {
         primary: "Денежник 💰",
@@ -114,11 +119,17 @@ export const ROLE_BENCHMARKS: Record<CoreRoleKey, Record<CountryCode, RoleBenchm
         { domain: "relationship", importance: "medium" },
       ],
       primeTalents: [
-        { id: 1, nameRu: "Достижение (Achiever)", reason: "Голод: постоянная неудовлетворенность средним результатом" },
-        { id: 10, nameRu: "Катализатор (Activator)", reason: "Шустрость: мгновенно берет лид в работу без раскачки" },
-        { id: 18, nameRu: "Адаптивность (Adaptability)", reason: "Гибкость: подстраивается под любой характер и настрой гостя" },
         { id: 11, nameRu: "Распорядитель (Command)", reason: "Стрессоустойчивость: уверенно держит удар и ведет к сделке" },
-        { id: 13, nameRu: "Конкуренция (Competition)", reason: "Драйв быть номером один по выручке в клубе" },
+        { id: 13, nameRu: "Конкуренция (Competition)", reason: "Голод: драйв быть номером один по выручке и зарабатывать максимум" },
+        { id: 15, nameRu: "Уверенность (Self-Assurance)", reason: "Хладнокровие при отказах и напор в переговорах" },
+        { id: 1, nameRu: "Достижение (Achiever)", reason: "Постоянная неудовлетворенность средним результатом" },
+        { id: 10, nameRu: "Катализатор (Activator)", reason: "Шустрость: мгновенно берет лид в работу без раскачки" },
+        { id: 18, nameRu: "Адаптивность (Adaptability)", reason: "Гибкость: быстро меняет тактику под характер собеседника" },
+      ],
+      disfavoredTalents: [
+        { id: 22, nameRu: "Гармония (Harmony)", reason: "Страх конфликта мешает настаивать на условиях сделки" },
+        { id: 21, nameRu: "Эмпатия (Empathy)", reason: "Излишняя мягкость мешает дожимать оплату" },
+        { id: 5, nameRu: "Осмотрительность (Deliberative)", reason: "Медлительность снижает динамику закрытия" },
       ],
       targetMotivation: {
         primary: "Денежник 💰",
@@ -172,26 +183,31 @@ export const ROLE_BENCHMARKS: Record<CoreRoleKey, Record<CountryCode, RoleBenchm
       keyMotto: "«Просто. Безопасно. Эффективно. Первое впечатление решает всё»",
       targetDomains: [
         { domain: "relationship", importance: "critical" },
-        { domain: "influencing", importance: "high" },
-        { domain: "executing", importance: "high" },
+        { domain: "influencing", importance: "critical" },
+        { domain: "executing", importance: "medium" },
       ],
       primeTalents: [
         { id: 17, nameRu: "Обаяние (Woo)", reason: "Мгновенное растапливание льда с незнакомыми людьми" },
         { id: 25, nameRu: "Позитивность (Positivity)", reason: "Заряжающая энергетика, искренняя доброжелательность" },
-        { id: 10, nameRu: "Катализатор (Activator)", reason: "Инициатива первого шага, активный поиск новых контактов" },
-        { id: 24, nameRu: "Индивидуализация (Individualization)", reason: "Точный подбор формата презентации под возраст и цели" },
-        { id: 21, nameRu: "Эмпатия (Empathy)", reason: "Слышит истинные сомнения человека и не обесценивает их" },
-        { id: 8, nameRu: "Ответственность (Responsibility)", reason: "Аккуратная фиксация данных в CRM и своевременный follow-up" },
+        { id: 12, nameRu: "Общительность (Communication)", reason: "Живой, увлекательный язык, умение разговорить любого человека" },
+        { id: 23, nameRu: "Инклюзивность (Includer)", reason: "Умение радушно принять любого человека в круг общения" },
+        { id: 10, nameRu: "Катализатор (Activator)", reason: "Инициатива первого шага, быстрая обработка потока обращений" },
+        { id: 18, nameRu: "Адаптивность (Adaptability)", reason: "Легкое переключение между десятками новых диалогов за день" },
+      ],
+      disfavoredTalents: [
+        { id: 27, nameRu: "Аналитик (Analytical)", reason: "Уход в сухие цифры и таблицы мешает теплому эмоциональному контакту" },
+        { id: 5, nameRu: "Осмотрительность (Deliberative)", reason: "Закрытость и настороженность мешают быстрому знакомству" },
+        { id: 32, nameRu: "Интеллект (Intellection)", reason: "Потребность в тишине и уединении быстро истощает на потоке звонков" },
       ],
       targetMotivation: {
-        primary: "Результатник 🏆",
-        secondary: "Денежник 💰",
-        rationale: "Драйв от количества привлеченных людей, интерес к общению и бонус за квалифицированные лиды.",
+        primary: "Романтик 🎨",
+        secondary: "Результатник 🏆",
+        rationale: "Драйв от живого общения с новыми людьми, создания яркого впечатления и выполнения плана по встречам.",
       },
       targetPsychotype: {
         primary: "Экспрессив 🟡",
         secondary: "Дружелюбный 🟢",
-        rationale: "Теплый, открытый, контактный стиль общения, вызывающий естественное доверие к бренду 35.",
+        rationale: "Теплый, открытый, контактный стиль общения, вызывающий естественное доверие с первых секунд.",
       },
       competencies: [
         { name: "Установление контакта без давления", priority: "critical", description: "Помогает почувствовать себя свободно, без заученных скриптов и фамильярности" },
@@ -229,20 +245,26 @@ export const ROLE_BENCHMARKS: Record<CoreRoleKey, Record<CountryCode, RoleBenchm
       keyMotto: "«Просто. Безопасно. Эффективно. Честность рождает доверие»",
       targetDomains: [
         { domain: "relationship", importance: "critical" },
-        { domain: "influencing", importance: "high" },
-        { domain: "executing", importance: "high" },
+        { domain: "influencing", importance: "critical" },
+        { domain: "executing", importance: "medium" },
       ],
       primeTalents: [
         { id: 17, nameRu: "Обаяние (Woo)", reason: "Легкость знакомства, обаяние с первой секунды" },
-        { id: 25, nameRu: "Позитивность (Positivity)", reason: "Гостеприимный узбекский менталитет, открытость" },
+        { id: 25, nameRu: "Позитивность (Positivity)", reason: "Гостеприимность, открытость и теплая энергетика" },
+        { id: 12, nameRu: "Общительность (Communication)", reason: "Умение легко разговорить и расположить к себе незнакомого человека" },
+        { id: 23, nameRu: "Инклюзивность (Includer)", reason: "Искреннее радушие и принятие каждого собеседника" },
         { id: 10, nameRu: "Катализатор (Activator)", reason: "Высокая скорость обработки входящих заявок" },
-        { id: 21, nameRu: "Эмпатия (Empathy)", reason: "Искреннее понимание проблем со здоровьем и весом" },
-        { id: 8, nameRu: "Ответственность (Responsibility)", reason: "Пунктуальность и выполнение всех договоренностей" },
+        { id: 18, nameRu: "Адаптивность (Adaptability)", reason: "Гибкое переключение между разными людьми в потоке" },
+      ],
+      disfavoredTalents: [
+        { id: 27, nameRu: "Аналитик (Analytical)", reason: "Сухой расчетливый тон вместо теплого вовлечения" },
+        { id: 5, nameRu: "Осмотрительность (Deliberative)", reason: "Излишняя осторожность тормозит первый контакт" },
+        { id: 32, nameRu: "Интеллект (Intellection)", reason: "Склонность к уединенным размышлениям вместо активного общения" },
       ],
       targetMotivation: {
-        primary: "Результатник 🏆",
-        secondary: "Романтик 🎨",
-        rationale: "Вдохновение от пользы людям, радость от притока новых резидентов в клуб.",
+        primary: "Романтик 🎨",
+        secondary: "Результатник 🏆",
+        rationale: "Вдохновение от живого общения с людьми, радость от притока новых гостей и выполнения плана встреч.",
       },
       targetPsychotype: {
         primary: "Экспрессив 🟡",
@@ -294,22 +316,27 @@ export const ROLE_BENCHMARKS: Record<CoreRoleKey, Record<CountryCode, RoleBenchm
         { domain: "strategic", importance: "medium" },
       ],
       primeTalents: [
-        { id: 20, nameRu: "Развитие (Developer)", reason: "Видит потенциал в каждом, радуется малейшему прогрессу подопечного" },
-        { id: 21, nameRu: "Эмпатия (Empathy)", reason: "Тонко чувствует усталость, страх новичка или плохое самочувствие" },
-        { id: 8, nameRu: "Ответственность (Responsibility)", reason: "Безопасность зала, пунктуальность, контроль оборудования" },
-        { id: 25, nameRu: "Позитивность (Positivity)", reason: "Поддержка человека, когда ему трудно, искренняя улыбка" },
-        { id: 6, nameRu: "Дисциплина (Discipline)", reason: "Соблюдение регламентов, заполнение CRM, фиксация замеров" },
-        { id: 9, nameRu: "Восстановление (Restorative)", reason: "Помогает преодолеть мышечные зажимы, саркопению и боли" },
+        { id: 20, nameRu: "Развитие (Developer)", reason: "Видит потенциал в каждом, терпеливо обучает и радуется прогрессу подопечного" },
+        { id: 21, nameRu: "Эмпатия (Empathy)", reason: "Тонко чувствует усталость, страх новичка или физический дискомфорт" },
+        { id: 9, nameRu: "Восстановление (Restorative)", reason: "Бережно помогает устранить проблему, вернуть человеку тонус и здоровье" },
+        { id: 6, nameRu: "Дисциплина (Discipline)", reason: "Строгое соблюдение методики, техники безопасности и порядка" },
+        { id: 8, nameRu: "Ответственность (Responsibility)", reason: "Личная надежность, контроль безопасности и забота о людях" },
+        { id: 22, nameRu: "Гармония (Harmony)", reason: "Спокойное урегулирование любых трений и создание безопасной среды" },
+      ],
+      disfavoredTalents: [
+        { id: 11, nameRu: "Распорядитель (Command)", reason: "Жесткое давление и командный тон пугают новичков" },
+        { id: 13, nameRu: "Конкуренция (Competition)", reason: "Сравнение людей между собой разрушает атмосферу безопасности" },
+        { id: 16, nameRu: "Значимость (Significance)", reason: "Самолюбование мешает сосредоточиться на заботе о подопечном" },
       ],
       targetMotivation: {
         primary: "Романтик 🎨",
-        secondary: "Результатник 🏆",
-        rationale: "Глубокая вовлеченность в помощь людям, ценность здоровья и признание достижений подопечных.",
+        secondary: "Бюджетник 🛡️",
+        rationale: "Глубокая вовлеченность в помощь людям, ценность здоровья, безопасности и стабильного качества.",
       },
       targetPsychotype: {
         primary: "Дружелюбный 🟢",
-        secondary: "Экспрессив 🟡",
-        rationale: "Теплый, поддерживающий, внимательный наставник, создающий безопасную среду без осуждения.",
+        secondary: "Аналитик 🔵",
+        rationale: "Теплый, поддерживающий, внимательный наставник, создающий безопасную среду и соблюдающий методику.",
       },
       competencies: [
         { name: "Знание физиологии и методики 35'", priority: "critical", description: "Понимает саркопению, энергообмен, инсулинорезистентность, границы компетенций (не врач)" },
@@ -354,21 +381,27 @@ export const ROLE_BENCHMARKS: Record<CoreRoleKey, Record<CountryCode, RoleBenchm
         { domain: "strategic", importance: "medium" },
       ],
       primeTalents: [
-        { id: 20, nameRu: "Развитие (Developer)", reason: "Искренняя гордость за каждый шаг резидента к здоровью" },
+        { id: 20, nameRu: "Развитие (Developer)", reason: "Искренняя гордость за каждый шаг подопечного к здоровью" },
         { id: 21, nameRu: "Эмпатия (Empathy)", reason: "Чуткость к эмоциональному состоянию и страхам новичков" },
-        { id: 8, nameRu: "Ответственность (Responsibility)", reason: "Порядок в клубе, идеальная подготовка смены" },
-        { id: 25, nameRu: "Позитивность (Positivity)", reason: "Теплая поддерживающая среда" },
-        { id: 6, nameRu: "Дисциплина (Discipline)", reason: "Строгое следование регламентам круговой тренировки" },
+        { id: 9, nameRu: "Восстановление (Restorative)", reason: "Внимательное решение проблем с самочувствием и техникой" },
+        { id: 6, nameRu: "Дисциплина (Discipline)", reason: "Строгое следование регламентам и порядку" },
+        { id: 8, nameRu: "Ответственность (Responsibility)", reason: "Надежность, безопасность и забота о каждом человеке" },
+        { id: 22, nameRu: "Гармония (Harmony)", reason: "Создание доброжелательной, бесконфликтной атмосферы" },
+      ],
+      disfavoredTalents: [
+        { id: 11, nameRu: "Распорядитель (Command)", reason: "Резкость и давление отталкивают подопечных" },
+        { id: 13, nameRu: "Конкуренция (Competition)", reason: "Соревновательность вредит бережному наставничеству" },
+        { id: 16, nameRu: "Значимость (Significance)", reason: "Фокус на собственном эго вместо внимания к людям" },
       ],
       targetMotivation: {
         primary: "Романтик 🎨",
-        secondary: "Результатник 🏆",
-        rationale: "Желание помогать соотечественникам быть здоровыми, уважение в коллективе.",
+        secondary: "Бюджетник 🛡️",
+        rationale: "Желание помогать людям быть здоровыми, соблюдение стандартов безопасности и уважение в коллективе.",
       },
       targetPsychotype: {
         primary: "Дружелюбный 🟢",
-        secondary: "Экспрессив 🟡",
-        rationale: "Забота, уважение к старшим, деликатность в общении с женщинами и новичками.",
+        secondary: "Аналитик 🔵",
+        rationale: "Забота, уважение к старшим, деликатность и аккуратность в методике.",
       },
       competencies: [
         { name: "Безопасность и методика", priority: "critical", description: "Контроль пульса, суставов, правильности дыхания" },
@@ -411,26 +444,30 @@ export const ROLE_BENCHMARKS: Record<CoreRoleKey, Record<CountryCode, RoleBenchm
       keyMotto: "«Инициативность + результативность + системность + высокая скорость работы»",
       targetDomains: [
         { domain: "executing", importance: "critical" },
-        { domain: "influencing", importance: "high" },
-        { domain: "strategic", importance: "high" },
+        { domain: "strategic", importance: "critical" },
+        { domain: "relationship", importance: "high" },
       ],
       primeTalents: [
-        { id: 1, nameRu: "Достижение (Achiever)", reason: "Фокус на плане выходов кандидатов, а не на количестве звонков" },
-        { id: 2, nameRu: "Организатор (Arranger)", reason: "Управление динамичной воронкой, координация собеседований и групп" },
-        { id: 27, nameRu: "Аналитик (Analytical)", reason: "Поиск причин низкой конверсии этапов, принятие решений на цифрах" },
-        { id: 10, nameRu: "Катализатор (Activator)", reason: "Высокая скорость отклика и запуска новых источников кандидатов" },
-        { id: 24, nameRu: "Индивидуализация (Individualization)", reason: "Быстрая оценка психотипа соискателя и соответствия профилю" },
-        { id: 8, nameRu: "Ответственность (Responsibility)", reason: "Выполнение договоренностей по срокам закрытия позиций" },
+        { id: 24, nameRu: "Индивидуализация (Individualization)", reason: "Точное считывание мотивов, психотипа и сильных сторон каждого соискателя" },
+        { id: 2, nameRu: "Организатор (Arranger)", reason: "Системное управление воронкой, потоками собеседований и координацией групп" },
+        { id: 27, nameRu: "Аналитик (Analytical)", reason: "Анализ конверсий этапов воронки и оценка людей по фактам, а не симпатиям" },
+        { id: 1, nameRu: "Достижение (Achiever)", reason: "Фокус на конечном плане выходов сотрудников, а не на процессе звонков" },
+        { id: 8, nameRu: "Ответственность (Responsibility)", reason: "Выполнение обязательств по срокам и качеству закрытия вакансий" },
+        { id: 5, nameRu: "Осмотрительность (Deliberative)", reason: "Проницательность на интервью, выявление рисков и неискренности кандидатов" },
+      ],
+      disfavoredTalents: [
+        { id: 18, nameRu: "Адаптивность (Adaptability)", reason: "Работа по настроению без системного контроля воронки ведет к срыву плана найма" },
+        { id: 20, nameRu: "Развитие (Developer)", reason: "Склонность долго перевоспитывать неподходящих людей вместо точного отбора" },
       ],
       targetMotivation: {
         primary: "Результатник 🏆",
-        secondary: "Денежник 💰",
-        rationale: "Ориентация на фактические выходы сотрудников, премия за выполнение плана найма и снижение ранней текучести.",
+        secondary: "Бюджетник 🛡️",
+        rationale: "Ориентация на фактические выходы сотрудников, системный порядок в воронке и выполнение плана найма.",
       },
       targetPsychotype: {
-        primary: "Директив 🔴",
-        secondary: "Аналитик 🔵",
-        rationale: "Четкий, структурный, напористый подход к воронке, умение держать высокий темп и требовать результат.",
+        primary: "Аналитик 🔵",
+        secondary: "Директив 🔴",
+        rationale: "Структурный, проницательный, результативный подход к воронке и объективной оценке кандидатов.",
       },
       competencies: [
         { name: "Ориентация на результат и план найма", priority: "critical", description: "Оценивает себя по выходам на работу, а не по количеству звонков" },
@@ -477,25 +514,30 @@ export const ROLE_BENCHMARKS: Record<CoreRoleKey, Record<CountryCode, RoleBenchm
       keyMotto: "«Качественные сотрудники в срок и снижение ранней текучести»",
       targetDomains: [
         { domain: "executing", importance: "critical" },
+        { domain: "strategic", importance: "critical" },
         { domain: "relationship", importance: "high" },
-        { domain: "strategic", importance: "high" },
       ],
       primeTalents: [
-        { id: 1, nameRu: "Достижение (Achiever)", reason: "Ответственность за своевременное закрытие вакансий клубов" },
-        { id: 2, nameRu: "Организатор (Arranger)", reason: "Четкое планирование рабочего дня и этапов отбора" },
-        { id: 24, nameRu: "Индивидуализация (Individualization)", reason: "Оценка истинной финансовой и профессиональной мотивации" },
-        { id: 27, nameRu: "Аналитик (Analytical)", reason: "Решения на основе фактов и проверок, а не личных симпатий" },
-        { id: 8, nameRu: "Ответственность (Responsibility)", reason: "Дисциплина, честность и ответственность за доходимость" },
+        { id: 24, nameRu: "Индивидуализация (Individualization)", reason: "Точная оценка мотивов, характера и сильных сторон каждого кандидата" },
+        { id: 2, nameRu: "Организатор (Arranger)", reason: "Четкая координация потоков кандидатов, этапов отбора и расписаний" },
+        { id: 27, nameRu: "Аналитик (Analytical)", reason: "Решения на основе фактов, цифр воронки и объективных критериев" },
+        { id: 1, nameRu: "Достижение (Achiever)", reason: "Ответственность за своевременное закрытие вакансий до результата" },
+        { id: 8, nameRu: "Ответственность (Responsibility)", reason: "Дисциплина, честность и ответственность за выход людей" },
+        { id: 5, nameRu: "Осмотрительность (Deliberative)", reason: "Тщательный фильтр рисков и проверка надежности кандидатов" },
+      ],
+      disfavoredTalents: [
+        { id: 18, nameRu: "Адаптивность (Adaptability)", reason: "Отсутствие системности и структуры в ведении базы кандидатов" },
+        { id: 20, nameRu: "Развитие (Developer)", reason: "Попытки тянуть слабых кандидатов вместо жесткого соблюдения критериев отбора" },
       ],
       targetMotivation: {
         primary: "Результатник 🏆",
-        secondary: "Статусник 👑",
-        rationale: "Гордость за сильный коллектив клуба и автономия в принятии кадровых решений.",
+        secondary: "Бюджетник 🛡️",
+        rationale: "Ориентация на выполнение плана закрытия вакансий и системное качество отбора.",
       },
       targetPsychotype: {
-        primary: "Директив 🔴",
-        secondary: "Дружелюбный 🟢",
-        rationale: "Требовательность к профессиональным критериям в сочетании с вежливым деловым тоном.",
+        primary: "Аналитик 🔵",
+        secondary: "Директив 🔴",
+        rationale: "Объективность к профессиональным критериям в сочетании с четким управлением воронкой.",
       },
       competencies: [
         { name: "Самостоятельность в подборе", priority: "critical", description: "Не ждет указаний, сам тестирует каналы в Telegram, OLX, HeadHunter" },
@@ -628,9 +670,12 @@ export interface RoleMatchResult {
 }
 
 /**
- * Calculates match score (0-100%) between an employee's Gallup assessment result and an ideal job role benchmark.
- * Calibrated against CliftonStrengths reality: Top 5 and Top 10 prime talents represent natural excellence,
- * domain alignment measures actual dominant energy and top 5 concentration, and motivation/psychotype provide behavioral fit.
+ * Orthogonal Role-Matching Engine 3.0:
+ * Evaluates candidate fit (0-100%) using:
+ * 1. Core Signature Talents (first 3 in primeTalents, 1.5x weight) + Supporting Prime Talents (1.0x weight)
+ * 2. Core Gatekeeper verification (penalizes roles where candidate lacks all 3 defining core signature talents)
+ * 3. Anti-Marker / Disfavored Talents penalty (subtracts points if opposing traits are in candidate's Top 8)
+ * 4. Domain Alignment, Motivation Vector & Psychotype Synergy
  */
 export function calculateRoleMatch(
   results: AssessmentResult,
@@ -644,13 +689,18 @@ export function calculateRoleMatch(
   const top10Ids = (results.allRanked || []).slice(0, 10).map((t) => t.id);
   const top15Ids = (results.allRanked || []).slice(0, 15).map((t) => t.id);
 
-  // 1. Prime Talents Match (up to 45 points)
+  // 1. Prime Talents Match with Core Signature Weighting
   let talentPoints = 0;
+  let coreHitsInTop7 = 0;
+  let coreHitsInTop12 = 0;
+
   const matchedPrimeTalents: { id: number; nameRu: string; rank: number }[] = [];
   const missingPrimeTalents: { id: number; nameRu: string }[] = [];
 
-  for (const pt of benchmark.primeTalents) {
-    // Robust resolver: match by ID, slug, or normalized Russian name prefix
+  benchmark.primeTalents.forEach((pt, idx) => {
+    const isCoreSignature = idx < 3; // First 3 talents are the role's unique DNA signature
+    const weight = isCoreSignature ? 1.55 : 1.0;
+
     const foundRankIndex = (results.allRanked || []).findIndex((t) => {
       if (t.id === pt.id) return true;
       if (t.slug && pt.nameRu.toLowerCase().includes(t.slug.toLowerCase())) return true;
@@ -663,47 +713,84 @@ export function calculateRoleMatch(
     const realTalentId = foundRankIndex !== -1 ? results.allRanked[foundRankIndex].id : pt.id;
     const realTalentName = foundRankIndex !== -1 ? results.allRanked[foundRankIndex].nameRu : pt.nameRu;
 
+    if (isCoreSignature) {
+      if (rank <= 7) coreHitsInTop7++;
+      if (rank <= 12) coreHitsInTop12++;
+    }
+
     if (top5Ids.includes(realTalentId) || rank <= 5) {
-      talentPoints += 15;
+      talentPoints += (rank <= 3 ? 15 : 13) * weight;
       matchedPrimeTalents.push({ id: realTalentId, nameRu: realTalentName, rank });
     } else if (top10Ids.includes(realTalentId) || rank <= 10) {
-      talentPoints += 10;
+      talentPoints += 9.5 * weight;
       matchedPrimeTalents.push({ id: realTalentId, nameRu: realTalentName, rank });
     } else if (top15Ids.includes(realTalentId) || rank <= 15) {
-      talentPoints += 6;
+      talentPoints += 5.5 * weight;
       matchedPrimeTalents.push({ id: realTalentId, nameRu: realTalentName, rank });
     } else if (rank <= 20) {
-      talentPoints += 3;
+      talentPoints += 2.5 * weight;
     } else {
       missingPrimeTalents.push({ id: realTalentId, nameRu: realTalentName });
     }
-  }
+  });
 
-  // Realistic maximum target for talents:
-  // e.g. 2 prime in Top 5 (30 pts) + 1 in Top 10 (10 pts) + 1 in Top 15 (6 pts) = 46 pts -> 100%
-  const maxRealisticTalentPts = Math.min(benchmark.primeTalents.length * 9, 45);
+  // Realistic maximum target for talents (50 points weight)
+  const maxRealisticTalentPts = Math.min(benchmark.primeTalents.length * 10.5, 56);
   const talentRatio = maxRealisticTalentPts > 0 ? Math.min(1, talentPoints / maxRealisticTalentPts) : 0.7;
 
-  // 2. Domain Alignment (up to 30 points)
+  // 2. Anti-Marker / Disfavored Talents Penalty & Core Gatekeeper Adjustment
+  let roleSpecificAdjustment = 0;
+
+  if (benchmark.disfavoredTalents && benchmark.disfavoredTalents.length > 0) {
+    for (const dt of benchmark.disfavoredTalents) {
+      const foundIdx = (results.allRanked || []).findIndex((t) => t.id === dt.id);
+      const rank = foundIdx !== -1 ? foundIdx + 1 : 34;
+      if (rank <= 3) {
+        roleSpecificAdjustment -= 6.5;
+      } else if (rank <= 5) {
+        roleSpecificAdjustment -= 4.5;
+      } else if (rank <= 8) {
+        roleSpecificAdjustment -= 2.5;
+      }
+    }
+  }
+
+  // Core Gatekeeper check for the 4 specialized roles
+  if (benchmark.primeTalents.length >= 5) {
+    if (coreHitsInTop12 === 0) {
+      // Candidate has 0 of the 3 defining Core Signature talents in their Top 12
+      roleSpecificAdjustment -= 14;
+    } else if (coreHitsInTop7 === 0) {
+      // Candidate has 0 of the 3 defining Core Signature talents in their Top 7
+      roleSpecificAdjustment -= 6;
+    } else if (coreHitsInTop7 >= 2) {
+      // Candidate has 2 or all 3 of the role's Core Signature talents in their Top 7
+      roleSpecificAdjustment += 5;
+    }
+  }
+
+  // 3. Domain Alignment (up to 25 points)
   const targetDomainKeys = benchmark.targetDomains.map((d) => d.domain);
   const top5InTargetDomains = (results.top5 || []).filter((t) => targetDomainKeys.includes(t.domain)).length;
-  
+
   const domPointsTotal = (results.domains || []).reduce((acc, d) => {
     if (targetDomainKeys.includes(d.domain)) {
       const weight = benchmark.targetDomains.find((td) => td.domain === d.domain)?.importance === "critical" ? 1.4 : 1.0;
-      return acc + (d.percentage * weight);
+      return acc + d.percentage * weight;
     }
     return acc;
   }, 0);
 
   const isDominantTarget = targetDomainKeys.includes(results.dominantDomain);
-  const targetTop5Share = top5InTargetDomains / 5; // e.g. 3/5 = 0.6, 4/5 = 0.8
-  
-  // Normalized domain ratio: blends total target domain share, top 5 concentration, and dominant domain
-  const domainRatio = Math.min(1, Math.max(0.35, (domPointsTotal / 52) * 0.5 + (targetTop5Share * 0.3) + (isDominantTarget ? 0.2 : 0.05)));
+  const targetTop5Share = top5InTargetDomains / 5;
 
-  // 3. Motivation Match (up to 15 points)
-  let motivationPoints = 7;
+  const domainRatio = Math.min(
+    1,
+    Math.max(0.35, (domPointsTotal / 52) * 0.5 + targetTop5Share * 0.3 + (isDominantTarget ? 0.2 : 0.05))
+  );
+
+  // 4. Motivation Match (up to 15 points)
+  let motivationPoints = 6;
   const primMotiv = (results.motivation?.dominant?.nameRu || "").toLowerCase();
   const secMotiv = (results.motivation?.all?.[1]?.nameRu || "").toLowerCase();
   const targetPrimMotiv = benchmark.targetMotivation.primary.slice(0, 4).toLowerCase();
@@ -721,8 +808,8 @@ export function calculateRoleMatch(
     motivationPoints = 9;
   }
 
-  // 4. Psychotype Match (up to 10 points)
-  let psychotypePoints = 5;
+  // 5. Psychotype Match (up to 10 points)
+  let psychotypePoints = 4;
   const primPsycho = (results.psychotype?.dominant?.nameRu || "").toLowerCase();
   const secPsycho = (results.psychotype?.all?.[1]?.nameRu || "").toLowerCase();
   const targetPrimPsycho = benchmark.targetPsychotype.primary.slice(0, 4).toLowerCase();
@@ -740,9 +827,14 @@ export function calculateRoleMatch(
     psychotypePoints = 6;
   }
 
-  // Calculate Total Percentage (Weighted)
-  const totalRaw = talentRatio * 45 + domainRatio * 30 + motivationPoints + psychotypePoints;
-  const matchPercentage = Math.round(Math.min(98, Math.max(38, totalRaw)));
+  // Calculate Total Percentage (Weighted + Orthogonal Adjustments)
+  const totalRaw =
+    talentRatio * 50 +
+    domainRatio * 25 +
+    motivationPoints +
+    psychotypePoints +
+    roleSpecificAdjustment;
+  const matchPercentage = Math.round(Math.min(98, Math.max(32, totalRaw)));
 
   let grade: "ideal" | "recommended" | "conditional" | "low" = "recommended";
   let gradeTitle = "Высокая совместимость (A)";
@@ -753,7 +845,7 @@ export function calculateRoleMatch(
     grade = "ideal";
     gradeTitle = "Идеальное попадание (A+)";
     gradeColor = "text-emerald-700 bg-emerald-50 border-emerald-300";
-    verdict = `Прирожденный специалист для позиции «${benchmark.nameRu}»! Высочайшая концентрация ключевых талантов, врожденный драйвер и психотип полностью соответствуют эталону 35 Health Clubs.`;
+    verdict = `Прирожденный специалист для позиции «${benchmark.nameRu}»! Высочайшая концентрация ключевых талантов, врожденный драйвер и психотип полностью соответствуют эталону.`;
   } else if (matchPercentage >= 72) {
     grade = "recommended";
     gradeTitle = "Высокая совместимость (A)";

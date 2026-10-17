@@ -25,7 +25,7 @@ export function calculateAssessment(
   responses: ResponseRecord[]
 ): AssessmentResult {
   const SPEED_THRESHOLD_MS = 8000;
-  const SPEED_BONUS_MULTIPLIER = 1.15;
+  const SPEED_BONUS_MULTIPLIER = 1.12;
 
   let speedBonusHits = 0;
   let totalTimeMs = 0;
@@ -63,7 +63,7 @@ export function calculateAssessment(
       continue;
     }
 
-    const isFast = responseTimeMs < SPEED_THRESHOLD_MS;
+    const isFast = responseTimeMs > 0 && responseTimeMs < SPEED_THRESHOLD_MS;
     const eligibleForSpeedBonus = isFast && choice !== 0;
 
     let pointsA = 0;
@@ -71,19 +71,23 @@ export function calculateAssessment(
 
     if (choice === -2) {
       pointsA = 2.0;
+      pointsB = -0.35;
       stats[talentAId].strongChoicesCount++;
       stats[talentAId].chosenTimesMs.push(responseTimeMs);
     } else if (choice === -1) {
-      pointsA = 1.0;
+      pointsA = 1.1;
+      pointsB = -0.15;
       stats[talentAId].chosenTimesMs.push(responseTimeMs);
     } else if (choice === 0) {
-      pointsA = 0.3;
-      pointsB = 0.3;
+      pointsA = 0.25;
+      pointsB = 0.25;
     } else if (choice === 1) {
-      pointsB = 1.0;
+      pointsB = 1.1;
+      pointsA = -0.15;
       stats[talentBId].chosenTimesMs.push(responseTimeMs);
     } else if (choice === 2) {
       pointsB = 2.0;
+      pointsA = -0.35;
       stats[talentBId].strongChoicesCount++;
       stats[talentBId].chosenTimesMs.push(responseTimeMs);
     }
@@ -104,7 +108,8 @@ export function calculateAssessment(
     stats[talentBId].score += finalPointsB;
   }
 
-  // Compile scored talents
+  // Compile scored talents with Empirical Bayes win-rate normalization
+  // so talents asked 3 times with 100% win rate beat talents asked 5 times with mediocre choices.
   const scoredList: ScoredTalent[] = talents.map((t) => {
     const s = stats[t.id];
     const avgResponseTimeMs =
@@ -112,11 +117,17 @@ export function calculateAssessment(
         ? Math.round(s.chosenTimesMs.reduce((a, b) => a + b, 0) / s.chosenTimesMs.length)
         : 999999;
 
+    const clampedRaw = Math.max(0, s.rawScore);
+    const clampedScore = Math.max(0, s.score);
+    const effectiveDenom = Math.max(2.2, s.questionsCount);
+    const winRateScore = (clampedScore / effectiveDenom) * 3.2;
+    const normalizedScore = clampedScore * 0.55 + winRateScore * 0.45;
+
     return {
       ...t,
       rank: 0,
-      score: Number(s.score.toFixed(2)),
-      rawScore: Number(s.rawScore.toFixed(2)),
+      score: Number(normalizedScore.toFixed(2)),
+      rawScore: Number(clampedRaw.toFixed(2)),
       strongChoicesCount: s.strongChoicesCount,
       avgResponseTimeMs,
       questionsCount: s.questionsCount,
@@ -189,8 +200,10 @@ export function calculateAssessment(
   let dominantDomain: Domain = "executing";
   let maxDomainScore = -1;
   for (const d of domainList) {
-    if (d.score > maxDomainScore) {
-      maxDomainScore = d.score;
+    // Combine overall domain score and Top-5 presence so dominant domain accurately reflects top strengths
+    const weightedDom = d.score + d.talentsInTop5 * 2.5;
+    if (weightedDom > maxDomainScore) {
+      maxDomainScore = weightedDom;
       dominantDomain = d.domain;
     }
   }
@@ -206,11 +219,35 @@ export function calculateAssessment(
   // EXTENDED 2.0 ENGINE: 1. MOTIVATION TYPE (5 TYPES)
   // --------------------------------------------------------------------------
   const rawMotivationScores: Record<"money" | "status" | "result" | "budget" | "romantic", number> = {
-    money: getScore("competition") * 1.5 + getScore("achiever") * 1.3 + getScore("maximizer") * 1.2 + getScore("significance") * 0.8,
-    status: getScore("significance") * 1.6 + getScore("self_assurance") * 1.4 + getScore("command") * 1.2 + getScore("woo") * 0.8,
-    result: getScore("focus") * 1.5 + getScore("achiever") * 1.4 + getScore("activator") * 1.2 + getScore("strategic") * 1.1,
-    budget: getScore("discipline") * 1.6 + getScore("consistency") * 1.5 + getScore("deliberative") * 1.2 + getScore("responsibility") * 1.0,
-    romantic: getScore("ideation") * 1.6 + getScore("positivity") * 1.4 + getScore("futuristic") * 1.3 + getScore("adaptability") * 1.1,
+    money:
+      getScore("competition") * 1.6 +
+      getScore("command") * 1.3 +
+      getScore("self_assurance") * 1.2 +
+      getScore("maximizer") * 1.1 +
+      getScore("achiever") * 1.0,
+    status:
+      getScore("significance") * 1.6 +
+      getScore("self_assurance") * 1.3 +
+      getScore("command") * 1.2 +
+      getScore("woo") * 1.0,
+    result:
+      getScore("achiever") * 1.5 +
+      getScore("arranger") * 1.4 +
+      getScore("focus") * 1.3 +
+      getScore("responsibility") * 1.2 +
+      getScore("activator") * 1.1 +
+      getScore("strategic") * 1.1,
+    budget:
+      getScore("discipline") * 1.6 +
+      getScore("consistency") * 1.5 +
+      getScore("deliberative") * 1.3 +
+      getScore("responsibility") * 1.1,
+    romantic:
+      getScore("developer") * 1.5 +
+      getScore("empathy") * 1.4 +
+      getScore("positivity") * 1.4 +
+      getScore("ideation") * 1.2 +
+      getScore("restorative") * 1.1,
   };
 
   const totalMotiv = Object.values(rawMotivationScores).reduce((a, b) => a + b, 0) || 1;
@@ -240,10 +277,31 @@ export function calculateAssessment(
   // EXTENDED 2.0 ENGINE: 2. COMMUNICATION PSYCHOTYPE (DISC / 4 COLORS)
   // --------------------------------------------------------------------------
   const rawPsychoScores: Record<"directive" | "expressive" | "amiable" | "analytical", number> = {
-    directive: getScore("command") * 1.5 + getScore("competition") * 1.3 + getScore("self_assurance") * 1.2 + getScore("focus") * 1.1,
-    expressive: getScore("woo") * 1.5 + getScore("communication") * 1.4 + getScore("positivity") * 1.3 + getScore("significance") * 1.0,
-    amiable: getScore("harmony") * 1.5 + getScore("empathy") * 1.4 + getScore("includer") * 1.3 + getScore("developer") * 1.2 + getScore("relator") * 1.2,
-    analytical: getScore("analytical") * 1.6 + getScore("deliberative") * 1.4 + getScore("context") * 1.3 + getScore("intellection") * 1.2 + getScore("discipline") * 1.1,
+    directive:
+      getScore("command") * 1.6 +
+      getScore("competition") * 1.5 +
+      getScore("self_assurance") * 1.4 +
+      getScore("focus") * 1.1 +
+      getScore("activator") * 0.9,
+    expressive:
+      getScore("woo") * 1.6 +
+      getScore("communication") * 1.5 +
+      getScore("positivity") * 1.4 +
+      getScore("includer") * 1.2 +
+      getScore("adaptability") * 0.9,
+    amiable:
+      getScore("empathy") * 1.5 +
+      getScore("developer") * 1.5 +
+      getScore("harmony") * 1.4 +
+      getScore("relator") * 1.2 +
+      getScore("restorative") * 1.1,
+    analytical:
+      getScore("analytical") * 1.6 +
+      getScore("deliberative") * 1.4 +
+      getScore("arranger") * 1.3 +
+      getScore("individualization") * 1.2 +
+      getScore("strategic") * 1.1 +
+      getScore("discipline") * 1.0,
   };
 
   const totalPsycho = Object.values(rawPsychoScores).reduce((a, b) => a + b, 0) || 1;
