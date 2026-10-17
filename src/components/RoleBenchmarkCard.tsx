@@ -63,9 +63,6 @@ export function RoleBenchmarkCard({ results, roleName, country = "kz" }: RoleBen
               <Award className="w-4 h-4 print:w-3 print:h-3 text-teal-400 print:text-teal-700" />
               <span>Главная рекомендация по призванию в 35 Health Clubs</span>
             </div>
-            <span className="px-2.5 py-1 print:px-2 print:py-0.5 rounded-full text-xs print:text-[8.5px] font-bold bg-white/10 text-slate-200 print:bg-slate-100 print:text-slate-700 print:border print:border-slate-300">
-              {country === "uz" ? "🇺🇿 Узбекистан" : "🇰🇿 Казахстан"}
-            </span>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 print:flex-row print:items-center print:gap-3">
